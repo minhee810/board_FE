@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import CommentList from "../../components/CommentList";
 
 const BoardDetail = () => {
   return (
@@ -46,15 +47,25 @@ const BoardDetail = () => {
                 </Link>
               </div>
             </div>
-            <div className="card-footer"></div>
+            <div class="card-body fileUpLoad">
+              <label class="fileUpLoadBtn">파일</label>
+              <div id="fileName" class="fileName">
+                <Link href="#" data-savename="1711943118813_listener.ora">
+                  listener.ora
+                </Link>
+              </div>
+            </div>
+            <div className="card-footer">
+              <CommentList />
+            </div>
           </div>
         </div>
       </div>
       {/* <!-- /.container-fluid --> */}
-
       <a className="scroll-to-top rounded" href="#page-top">
         <i className="fas fa-angle-up"></i>
       </a>
+      W
     </>
   );
 };

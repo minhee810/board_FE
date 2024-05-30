@@ -1,4 +1,5 @@
 import React from "react";
+import Pagenation from "../../components/Pagenation";
 
 const BoardTables = () => {
   return (
@@ -49,6 +50,8 @@ const BoardTables = () => {
           </div>
         </div>
       </div>
+      {/* 페이징 처리 해야함. */}
+      {/* <Pagenation /> */}
 
       {/* <!-- End of Main Content --> */}
 
