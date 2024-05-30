@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
+import MenuItem from "./MenuItem";
 
 export default function Sidebar() {
+  const menuItems = [
+    { id: 1, name: "Pages", link: "/" },
+    { id: 2, name: "Tables", link: "/" },
+  ];
+
   return (
     <>
       <ul
@@ -23,6 +29,7 @@ export default function Sidebar() {
 
         {/*<!-- Nav Item - Pages Collapse Menu -->*/}
         <li className="nav-item">
+          {/* Dropdown target */}
           <Link
             to="#"
             className="nav-link collapsed"
@@ -34,6 +41,7 @@ export default function Sidebar() {
             <i className="fas fa-fw fa-folder"></i>
             <span>Pages</span>
           </Link>
+          {/* Dropdown menu */}
           <div
             id="collapsePages"
             className="collapse"
@@ -42,10 +50,10 @@ export default function Sidebar() {
           >
             <div className="bg-white py-2 collapse-inner rounded">
               <h6 className="collapse-header">Login Screens:</h6>
-              <Link to="/member/login" className="collapse-item">
+              <Link to="/login" className="collapse-item">
                 Login
               </Link>
-              <Link to="/member/join" className="collapse-item">
+              <Link to="/join" className="collapse-item">
                 membership
               </Link>
             </div>

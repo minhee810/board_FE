@@ -34,11 +34,13 @@ const BoardWrite = () => {
                 <div className="card-body h-100">
                   <textarea
                     id="a3"
-                    cols="30"
+                    name="a3"
+                    cols={30}
+                    rows={15}
                     className="form-control h-100"
                     placeholder="내용"
                     // style="resize: none"
-                  ></textarea>
+                  />
                 </div>
               </div>
             </form>
