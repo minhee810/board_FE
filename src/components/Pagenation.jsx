@@ -51,18 +51,12 @@ const Pagenation = () => {
             <c:when test="${boardList.last}"></c:when>
             <c:otherwise>
               <li class="page-item">
-                <Link
-                  class="page-link"
-                  href="${contextPath}?page=${boardList.number+1}"
-                >
+                <Link class="page-link" href="?page=${boardList.number+1}">
                   &rarr;
                 </Link>
               </li>
               <li class="page-item">
-                <Link
-                  class="page-link"
-                  href="${contextPath}?page=${boardList.totalPages-1}"
-                >
+                <Link class="page-link" href="?page=${boardList.totalPages-1}">
                   마지막
                 </Link>
               </li>
