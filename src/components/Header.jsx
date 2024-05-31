@@ -1,6 +1,21 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 export default function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/api/logout");
+    } catch {}
+  };
+  const handleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <>
       {/**Topbar */}
@@ -18,17 +33,18 @@ export default function Header() {
         {/** Topbar Navbar */}
         <ul className="navbar-nav ml-auto">
           <div className="topbar-divider d-none d-sm-block"></div>
-          {/** Nav Item - User Information */}
 
-          <li className="nav-item dropdown no-arrow">
+          {/** Nav Item - User Information true -> show  */}
+          <li className={`nav-item dropdown no-arrow ${isOpen ? "show" : ""}`}>
             <Link
               to=""
+              onClick={handleDropdown}
               className="nav-link dropdown-toggle"
               id="userDropdown"
               role="button"
               data-toggle="dropdown"
               aria-haspopup="true"
-              aria-expanded="false"
+              aria-expanded={isOpen}
             >
               <span className="mr-2 d-none d-lg-inline text-gray-600 small">
                 닉네임
@@ -42,24 +58,27 @@ export default function Header() {
 
             {/**  Dropdown - User Information */}
             <div
-              className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+              className={`dropdown-menu dropdown-menu-right shadow animated--grow-in ${
+                isOpen ? "show" : ""
+              }`}
               aria-labelledby="userDropdown"
             >
-              <Link to="#" className="dropdown-item">
-                <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+              <Link to="/profile" className="dropdown-item">
+                <FontAwesomeIcon icon={faUser} />
                 Profile
               </Link>
 
               <div className="dropdown-divider"></div>
-              <Link
+              <button
+                to="/logout"
+                onClick={handleLogout}
                 className="dropdown-item"
-                href="#"
                 data-toggle="modal"
                 data-target="#logoutModal"
               >
-                <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                <FontAwesomeIcon icon={faRightFromBracket} />
                 Logout
-              </Link>
+              </button>
             </div>
           </li>
         </ul>

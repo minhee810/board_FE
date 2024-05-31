@@ -35,7 +35,6 @@ export default function Sidebar() {
           <Link
             onClick={handleDropdown}
             to="#"
-            // className="nav-link collapsed"
             className={`nav-link ${isOpen ? "collapsed" : ""}`}
             data-toggle="collapse"
             data-target="#collapsePages"

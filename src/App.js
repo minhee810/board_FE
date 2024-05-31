@@ -12,7 +12,6 @@ import BoardWrite from "./pages/board/BoardWrite";
 function App() {
   return (
     <>
-      {/* <GlobalStyles /> */}
       <BrowserRouter>
         <Routes>
           {/* 중첩 라우팅 : 레이아웃 필요 컴포넌트들 */}
