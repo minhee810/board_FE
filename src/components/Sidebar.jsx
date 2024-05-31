@@ -46,6 +46,7 @@ export default function Sidebar() {
           </Link>
           <div
             id="collapsePages"
+            gti
             className={`collapse ${isOpen ? "show" : ""}`}
             aria-labelledby="headingPages"
             data-parent="#accordionSidebar"
