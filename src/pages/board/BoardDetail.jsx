@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import CommentList from "../../components/CommentList";
+import CommentWrite from "../../components/CommentWrite";
+import "../../assets/styles/board/board-detail.css";
 
 const BoardDetail = () => {
   return (
@@ -28,10 +30,7 @@ const BoardDetail = () => {
                 삭제
               </button>
             </div>
-            <div
-              className="card-body navbar-nav-scroll"
-              // style="height: 290px !important"
-            >
+            <div className="card-body navbar-nav-scroll custom-height">
               The styling for this basic card example is created by using
               default Bootstrap utility classNamees. By using utility
               classNamees, the style of the card component can be easily
@@ -47,16 +46,31 @@ const BoardDetail = () => {
                 </Link>
               </div>
             </div>
-            <div class="card-body fileUpLoad">
-              <label class="fileUpLoadBtn">파일</label>
-              <div id="fileName" class="fileName">
-                <Link href="#" data-savename="1711943118813_listener.ora">
-                  listener.ora
-                </Link>
-              </div>
-            </div>
+
             <div className="card-footer">
-              <CommentList />
+              <form action="#" id="replyForm" name="replyForm">
+                <input type="hidden" name="boardNo" value="1" />
+                <input type="hidden" name="parentCommentNo" value="0" />
+                <input type="hidden" name="commentNo" value="0" />
+                <ul
+                  id="commentDiv"
+                  style={{
+                    maxHeight: "500px",
+                    overflowY: "scroll",
+                    overflowX: "hidden",
+                  }}
+                >
+                  <CommentList />
+                </ul>
+              </form>
+              <form
+                action="#"
+                className="flex"
+                id="commentForm"
+                name="commentForm"
+              >
+                <CommentWrite />
+              </form>
             </div>
           </div>
         </div>
@@ -65,7 +79,6 @@ const BoardDetail = () => {
       <a className="scroll-to-top rounded" href="#page-top">
         <i className="fas fa-angle-up"></i>
       </a>
-      W
     </>
   );
 };

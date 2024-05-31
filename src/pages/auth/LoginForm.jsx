@@ -2,7 +2,7 @@ import React from "react";
 
 const LoginForm = () => {
   return (
-    <>
+    <div className="bg-gradient-primary">
       <div className="container">
         {/* <!-- Outer Row --> */}
         <div className="row justify-content-center">
@@ -70,7 +70,7 @@ const LoginForm = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

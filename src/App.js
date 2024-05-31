@@ -1,7 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import { JoinForm } from "./pages/auth/JoinForm";
-import GlobalStyles from "./assets/styles/GlobalStyles";
+import "./assets/styles/sb-admin-2.css";
+import "./assets/styles/sb-admin-2.min.css";
+import "./index.css";
 import LoginForm from "./pages/auth/LoginForm";
 import BoardTables from "./pages/board/BoardTables";
 import BoardDetail from "./pages/board/BoardDetail";
@@ -10,7 +12,7 @@ import BoardWrite from "./pages/board/BoardWrite";
 function App() {
   return (
     <>
-      <GlobalStyles />
+      {/* <GlobalStyles /> */}
       <BrowserRouter>
         <Routes>
           {/* 중첩 라우팅 : 레이아웃 필요 컴포넌트들 */}

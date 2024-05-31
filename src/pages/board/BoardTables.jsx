@@ -1,5 +1,4 @@
 import React from "react";
-import Pagenation from "../../components/Pagenation";
 
 const BoardTables = () => {
   return (
@@ -14,7 +13,7 @@ const BoardTables = () => {
               className="table table-bordered"
               id=""
               width="100%"
-              // cellSpacing="0"
+              cellSpacing="0"
             >
               <colgroup>
                 <col width="20%" />

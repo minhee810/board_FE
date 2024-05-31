@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
-import MenuItem from "./MenuItem";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceLaughWink } from "@fortawesome/free-solid-svg-icons";
+import { faFolder } from "@fortawesome/free-regular-svg-icons";
+import { faTable } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 export default function Sidebar() {
-  const menuItems = [
-    { id: 1, name: "Pages", link: "/" },
-    { id: 2, name: "Tables", link: "/" },
-  ];
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <>
@@ -13,38 +18,36 @@ export default function Sidebar() {
         className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
         id="accordionSidebar"
       >
-        {/*<!-- Sidebar - Brand --*/}
         <Link
           to="/"
           className="sidebar-brand d-flex align-items-center justify-content-center"
         >
           <div className="sidebar-brand-icon rotate-n-15">
-            <i className="fas fa-laugh-wink"></i>
+            <FontAwesomeIcon icon={faFaceLaughWink} size="xl" />
           </div>
           <div className="sidebar-brand-text mx-3">게시판</div>
         </Link>
-
         {/*<!-- Divider -->*/}
         <hr className="sidebar-divider my-0" />
 
         {/*<!-- Nav Item - Pages Collapse Menu -->*/}
         <li className="nav-item">
-          {/* Dropdown target */}
           <Link
+            onClick={handleDropdown}
             to="#"
-            className="nav-link collapsed"
+            // className="nav-link collapsed"
+            className={`nav-link ${isOpen ? "collapsed" : ""}`}
             data-toggle="collapse"
             data-target="#collapsePages"
-            aria-expanded="true"
+            aria-expanded={isOpen}
             aria-controls="collapsePages"
           >
-            <i className="fas fa-fw fa-folder"></i>
+            <FontAwesomeIcon icon={faFolder} style={{ marginRight: "4px" }} />
             <span>Pages</span>
           </Link>
-          {/* Dropdown menu */}
           <div
             id="collapsePages"
-            className="collapse"
+            className={`collapse ${isOpen ? "show" : ""}`}
             aria-labelledby="headingPages"
             data-parent="#accordionSidebar"
           >
@@ -59,16 +62,17 @@ export default function Sidebar() {
             </div>
           </div>
         </li>
+
         {/*<!-- Nav Item - Tables -->*/}
         <li className="nav-item active">
           <Link to="." className="nav-link">
-            <i className="fas fa-fw fa-table"></i>
+            <FontAwesomeIcon icon={faTable} style={{ marginRight: "4px" }} />
             <span>Tables</span>
           </Link>
         </li>
+
         {/*<!-- Divider -->*/}
         <hr className="sidebar-divider d-none d-md-block" />
-
         {/*<!-- Sidebar Toggler (Sidebar) -->*/}
         <div className="text-center d-none d-md-inline">
           <button
