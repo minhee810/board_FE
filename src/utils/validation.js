@@ -20,13 +20,15 @@ const keyword = {
 };
 
 // 정규식 함수
-function regExpFields(element) {
-  let fieldId = element.attr("id");
-  let val = element.val();
-  const regex = validator[fieldId];
-  if (regex) {
-    return regex.test(val);
-  }
+function regExpFields(e) {
+  console.log("regExpFields() 호출");
+  console.log(e);
+  // let fieldId = e.target.name;
+  // let val = e.target.value;
+  // const regex = validator[fieldId];
+  // if (regex) {
+  //   return regex.test(val);
+  // }
 }
 
 // 이벤트 객체에서 name 속성 추출하는 이벤트 -> replace 함수 호출
@@ -37,10 +39,19 @@ function regTest(e) {
 
 // 공통 replace 함수
 function replaceChar(element) {
-  let fieldId = element.attr("id");
-  let data = element.val();
+  let fieldId = element.target.name;
+  let data = element.target.value;
   if (!regExpFields(element)) {
     data = data.replace(keyword[fieldId], "");
     element.val(data);
   }
 }
+
+export {
+  validator,
+  commonValidator,
+  keyword,
+  regExpFields,
+  regTest,
+  replaceChar,
+};
