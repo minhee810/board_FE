@@ -35,7 +35,7 @@ const BoardTables = () => {
                 <tr>
                   <td>홍길동</td>
                   <td>
-                    <a href="detail.html">System Architect</a>
+                    <Link to="/detail">System Architect</Link>
                   </td>
                   <td>2011-04-25</td>
                   <td>0개</td>

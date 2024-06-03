@@ -5,17 +5,24 @@ import { faFolder } from "@fortawesome/free-regular-svg-icons";
 import { faTable } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
-export default function Sidebar() {
+export default function Sidebar({ onToggle }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isToggle, setIsToggle] = useState(false);
 
   const handleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleSideBarToggle = () => {
+    setIsToggle(!isToggle);
+    onToggle(isToggle);
+  };
+
   return (
     <>
       <ul
-        className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        className={`navbar-nav bg-gradient-primary sidebar sidebar-dark accordion 
+        ${isToggle ? "toggled" : ""}`}
         id="accordionSidebar"
       >
         <Link
@@ -77,6 +84,7 @@ export default function Sidebar() {
           <button
             className="rounded-circle border-0"
             id="sidebarToggle"
+            onClick={handleSideBarToggle}
           ></button>
         </div>
       </ul>
