@@ -7,34 +7,33 @@ export default function PostCode({ scriptUrl, setSignForms }) {
 
   // 주소 검색 완료 핸들러 -> 주소 검색 후 선택 시 호출되는 함수
   const handleComplete = (data) => {
-    let fullAddress = data.address;
-    let zonecode = data.zonecode;
-    let extraAddress = ""; // 참고항목 변수
+    let address = data.address;
+    let zipCode = data.zonecode;
+    let note = ""; // 참고항목 변수
 
     if (data.userSelectedType === "R") {
       // 사용자가 도로명 주소를 선택했을 경우
-      fullAddress = data.roadAddress;
+      address = data.roadAddress;
     } else {
       // 사용자가 지번 주소를 선택했을 경우(J)
-      fullAddress = data.jibunAddress;
+      address = data.jibunAddress;
     }
 
     if (data.addressType === "R") {
       if (data.bname !== "") {
-        extraAddress += data.bname;
+        note += data.bname;
       }
       if (data.buildingName !== "") {
-        extraAddress +=
-          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+        note += note !== "" ? `, ${data.buildingName}` : data.buildingName;
       }
     }
 
     //주소값을 상태값으로 저장
     setSignForms((prev) => ({
       ...prev,
-      address: fullAddress,
-      extraAddress,
-      zonecode,
+      address: address,
+      note,
+      zipCode,
     }));
   };
 

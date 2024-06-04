@@ -1,16 +1,17 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { isMatch } from "../utils/utility";
-import { regExpFields, validator } from "../utils/validation";
-const PasswordCheck = () => {
+
+const PasswordCheck = ({ onDataChange }) => {
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
+  const [password, setPassword] = useState("");
+  let pwCheckStatus = false;
 
   // 비밀번호 일치 검사
   const handlePasswordInput = () => {
     console.log("handlePasswordInput() 호출");
     const password = passwordRef.current.value;
     const passwordConfirm = passwordConfirmRef.current.value;
-    let pwCheckStatus = false;
 
     if (password && passwordConfirm && !isMatch(password, passwordConfirm)) {
       alert("비밀번호가 일치하지 않습니다.");
@@ -19,17 +20,25 @@ const PasswordCheck = () => {
     }
     if (password && passwordConfirm && isMatch(password, passwordConfirm)) {
       alert("비밀번호가 일치합니다.");
+      console.log("handleInputChange() 호출");
       pwCheckStatus = true;
+      if (pwCheckStatus) {
+        setPassword(password);
+        // 비밀번호 일치 확인 후 부모 컴포넌트로 password값과 함께 함수 호출하기
+        onDataChange(password);
+      }
     }
   };
 
-  const handleRegTest = (event) => {
-    console.log("handleRegTest() 호출");
-    console.log(passwordRef.current.value);
-    if (!regExpFields(event)) {
-      alert("비밀번호 유효성 검사 실패");
-    }
-  };
+  // const handleRegTest = (event) => {
+  //   console.log("handleRegTest() 호출");
+  //   console.log(passwordRef.current.value);
+  //   console.log("event : ", event.target.name);
+  //   let name = event.target.name;
+  //   if (!regExpFields(event)) {
+  //     createMessage(event);
+  //   }
+  // };
 
   return (
     <div>
@@ -39,7 +48,8 @@ const PasswordCheck = () => {
             ref={passwordRef}
             type="password"
             name="password"
-            onBlur={(event) => handleRegTest}
+            // onBlur={handleRegTest}
+            onChange={handlePasswordInput}
             autoComplete="off"
             className="form-control form-control-user"
             placeholder="비밀번호"

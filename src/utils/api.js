@@ -26,6 +26,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 409) {
       alert(error.response.data.msg);
     }
+    console.log(error);
     return Promise.reject(error);
   }
 );

@@ -1,4 +1,6 @@
-const validator = {
+import { hintMsg } from "./message";
+
+export const JOIN_VALID = {
   password: /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()-_=+])(?!.*\s).{8,15}$/,
   passwordConfirm: /^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()-_=+])(?!.*\s).{8,15}$/,
   email: /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/,
@@ -6,52 +8,62 @@ const validator = {
   username: /^[a-zA-Z0-9]{3,10}$/,
 };
 
-const commonValidator = {
+export const COMMON_VALID = {
   checkSpecial: /[!?@#$%^&*():;+-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/g,
   checkKor: /[ㄱ-ㅎㅏ-ㅣ가-힣]/g,
   checkEngNum: /[a-zA-Z0-9]/g,
 };
 
-const keyword = {
-  username: /[^\w\d\s]/gi,
+export const REPLACE_VALID = {
+  username: /[^\w\d\s가-힣]/gi,
   phone: /[^\d\s]/g,
   email: /[^\w\d\s@.]/gi,
   textarea: /(?:\r\n|\r|\n)/g,
 };
 
 // 정규식 함수
-function regExpFields(e) {
+export function regExpFields(event) {
   console.log("regExpFields() 호출");
-  console.log(e);
-  // let fieldId = e.target.name;
-  // let val = e.target.value;
-  // const regex = validator[fieldId];
-  // if (regex) {
-  //   return regex.test(val);
-  // }
-}
-
-// 이벤트 객체에서 name 속성 추출하는 이벤트 -> replace 함수 호출
-function regTest(e) {
-  let name = e.target.name;
-  replaceChar(name);
-}
-
-// 공통 replace 함수
-function replaceChar(element) {
-  let fieldId = element.target.name;
-  let data = element.target.value;
-  if (!regExpFields(element)) {
-    data = data.replace(keyword[fieldId], "");
-    element.val(data);
+  let fieldId = event.target.name;
+  let val = event.target.value;
+  const regex = JOIN_VALID[fieldId];
+  if (regex) {
+    return regex.test(val);
   }
 }
 
-export {
-  validator,
-  commonValidator,
-  keyword,
-  regExpFields,
-  regTest,
-  replaceChar,
+export function createMessage(event) {
+  console.log("createMessage() 호출");
+  let name = event.target.name;
+  console.log("hintMsg : ", hintMsg[name]);
+  let msg = hintMsg[name];
+  alert(msg.replace("{name}", name));
+  return hintMsg[name];
+}
+
+// 이벤트 객체에서 name 속성 추출하는 이벤트 -> replace 함수 호출
+// export function regTest(e) {
+//   let name = e.target.name;
+//   replaceChar(name);
+// }
+
+// 공통 replace 함수
+export const onChangeExp = (e, validType) => {
+  let data = e.target.value;
+  console.log("dd :", validType);
+  if (!regExpFields(e)) {
+    // 입력값 지우기
+    return data.replace(REPLACE_VALID[validType], "");
+  }
+};
+
+export const VALID_TYPE = {
+  // 한글
+  KR: /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/,
+  // 영문 + 숫자
+  EN_NO: /[a-z|A-Z|0-9]/,
+  // 영문, 숫자, 한글
+  EN_KR_NO: /[a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|0-9]/,
+  // 숫자
+  NO: /[0-9]/,
 };

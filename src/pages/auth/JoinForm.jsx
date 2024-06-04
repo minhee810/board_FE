@@ -1,30 +1,55 @@
 import React, { useState } from "react";
-import DaumPostcodeEmbed from "react-daum-postcode";
 import { Link } from "react-router-dom";
 import PostCode from "../../services/PostCode";
-import axios from "axios";
 import api from "../../utils/api";
-import isMatch from "../../utils/utility";
 import PasswordCheck from "../../components/PasswordCheck";
+import { useForm } from "react-hook-form";
+import { REPLACE_VALID, VALID_TYPE, onChangeExp } from "../../utils/validation";
 
 export const JoinForm = () => {
+  // watch : 값의 변화를 감지
+  // handleSubmit : validation(검증을 담당)
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onValid = (data) => {
+    console.log("data", data);
+  };
+
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
-    password: "",
     email: "",
+    password: "",
     phone: "",
     address: "",
-    zonecode: "",
-    extraAddress: "",
+    detailAddress: "",
+    zipCode: "",
+    note: "",
   });
 
-  const handleInputChange = (event) => {
-    console.log("handleInputChange() 호출");
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+  // input 창 상태 관리
+  const handleInputChange = (event, validType = "") => {
+    if (event.nativeEvent.isComposing) {
+      return;
+    } else {
+      console.log("handleInputChange() 호출");
+      let { name, value } = event.target;
+      // replace 함 값 다시 값에 할당해주는 방법
+      if (validType) {
+        console.log("validType", validType);
+        const filteredValue = value.replace(REPLACE_VALID[validType], "");
+        setFormData({ ...formData, [name]: filteredValue });
+      } else {
+        setFormData({ ...formData, [name]: value });
+      }
+    }
   };
 
   // 사용자 이름 & 이메일 중복 확인
@@ -41,10 +66,29 @@ export const JoinForm = () => {
     }
 
     try {
-      const response = await api.get(requsetURL);
+      await api.get(requsetURL);
     } catch (error) {
       console.log("response.status :", error.response.status);
     }
+  };
+
+  // 회원가입 버튼 클릭 시 폼 제출
+  const handleFormSubmit = async (e) => {
+    console.log("handleFormSubmit() 호출");
+    e.preventDefault();
+    try {
+      console.log(formData);
+      await api.post(`/api/join`, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.log("response.status :", error.response.status);
+    }
+  };
+
+  const handlePasswordChange = (password) => {
+    console.log("handlePasswordChange() 호출");
+    setFormData({ ...formData, password: password });
   };
 
   return (
@@ -61,22 +105,38 @@ export const JoinForm = () => {
                     <div className="text-center">
                       <h1 className="h4 text-gray-900 mb-4">회원가입</h1>
                     </div>
-                    <form className="user">
+                    {/* form start */}
+                    <form className="user" onSubmit={onValid}>
                       <div className="form-group">
                         <input
                           type="text"
                           name="username"
-                          onChange={handleInputChange}
+                          onChange={(e) => handleInputChange(e, "username")}
                           onBlur={checkDuplicate}
+                          // {...register("username", {
+                          //   required: true,
+                          //   pattern: /^[a-zA-Z0-9]{3,10}$/,
+                          // })}
                           className="form-control form-control-user"
                           placeholder="이름"
+                          value={formData.username}
                         />
+                        {errors.name && errors.name.type === "required" && (
+                          <p>this name field is required</p>
+                        )}
+                        {errors.name && errors.name.type === "maxLength" && (
+                          <p>your input exceed maximun length</p>
+                        )}
                       </div>
                       <div className="form-group row">
                         <div className="col-sm-9 mb-3 mb-sm-0">
                           <input
                             type="email"
                             name="email"
+                            // {...register("email", {
+                            //   required: true,
+                            //   pattern: /^\S+@\S+$/i,
+                            // })}
                             onChange={handleInputChange}
                             className="form-control form-control-user"
                             placeholder="이메일주소"
@@ -93,11 +153,12 @@ export const JoinForm = () => {
                         </div>
                       </div>
                       {/* password checker component */}
-                      <PasswordCheck />
+                      <PasswordCheck onDataChange={handlePasswordChange} />
                       <div className="form-group">
                         <input
                           type="phone"
                           name="phone"
+                          onChange={handleInputChange}
                           className="form-control form-control-user"
                           placeholder="휴대폰번호"
                         />
@@ -107,6 +168,7 @@ export const JoinForm = () => {
                           <input
                             type="text"
                             name="address"
+                            onChange={handleInputChange}
                             defaultValue={formData.address}
                             className="form-control form-control-user"
                             placeholder="주소"
@@ -120,6 +182,7 @@ export const JoinForm = () => {
                         <input
                           type="text"
                           name="detailAddress"
+                          onChange={handleInputChange}
                           className="form-control form-control-user"
                           placeholder="상세주소"
                         />
@@ -129,7 +192,8 @@ export const JoinForm = () => {
                           <input
                             type="text"
                             name="zipCode"
-                            defaultValue={formData.zonecode}
+                            defaultValue={formData.zipCode}
+                            onChange={handleInputChange}
                             className="form-control form-control-user"
                             placeholder="우편번호"
                           />
@@ -137,19 +201,21 @@ export const JoinForm = () => {
                         <div className="col-sm-6">
                           <input
                             type="note"
-                            defaultValue={formData.extraAddress}
+                            defaultValue={formData.note}
+                            onChange={handleInputChange}
                             className="form-control form-control-user"
                             placeholder="참고사항"
                           />
                         </div>
                       </div>
 
-                      <Link
-                        to="/join"
+                      <button
+                        // onClick={handleFormSubmit}
+                        type="submit"
                         className="btn btn-primary btn-user btn-block"
                       >
                         Register Account
-                      </Link>
+                      </button>
                     </form>
                     <hr />
                     <div className="text-center">
