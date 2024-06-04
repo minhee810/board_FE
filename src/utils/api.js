@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const api = axios.create({});
+const api = axios.create({
+  headers: { "Content-Type": "application/json" },
+});
 
 // request 인터셉터
 api.interceptors.request.use(
@@ -26,7 +28,9 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 409) {
       alert(error.response.data.msg);
     }
-    console.log(error);
+    if (error.response && error.response.status === 400) {
+      alert(error.response.data.msg);
+    }
     return Promise.reject(error);
   }
 );

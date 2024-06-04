@@ -15,7 +15,7 @@ export const COMMON_VALID = {
 };
 
 export const REPLACE_VALID = {
-  username: /[^\w\d\s가-힣]/gi,
+  username: /[^a-zA-Z0-9]/gi,
   phone: /[^\d\s]/g,
   email: /[^\w\d\s@.]/gi,
   textarea: /(?:\r\n|\r|\n)/g,
@@ -24,6 +24,7 @@ export const REPLACE_VALID = {
 // 정규식 함수
 export function regExpFields(event) {
   console.log("regExpFields() 호출");
+
   let fieldId = event.target.name;
   let val = event.target.value;
   const regex = JOIN_VALID[fieldId];
@@ -35,9 +36,9 @@ export function regExpFields(event) {
 export function createMessage(event) {
   console.log("createMessage() 호출");
   let name = event.target.name;
-  console.log("hintMsg : ", hintMsg[name]);
+  // console.log("hintMsg : ", hintMsg[name]);
   let msg = hintMsg[name];
-  alert(msg.replace("{name}", name));
+  alert(msg);
   return hintMsg[name];
 }
 

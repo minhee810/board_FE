@@ -1,27 +1,22 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import PostCode from "../../services/PostCode";
 import api from "../../utils/api";
 import PasswordCheck from "../../components/PasswordCheck";
 import { useForm } from "react-hook-form";
-import { REPLACE_VALID, VALID_TYPE, onChangeExp } from "../../utils/validation";
+import {
+  REPLACE_VALID,
+  createMessage,
+  regExpFields,
+} from "../../utils/validation";
 
 export const JoinForm = () => {
-  // watch : 값의 변화를 감지
-  // handleSubmit : validation(검증을 담당)
-  const {
-    register,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  const onValid = (data) => {
-    console.log("data", data);
-  };
-
+  const navigate = useNavigate();
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const phoneRef = useRef(null);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -34,25 +29,36 @@ export const JoinForm = () => {
     note: "",
   });
 
-  // input 창 상태 관리
+  // useEffect 입력값 변경될 때 마다 검증하기
+  useEffect(() => {}, []);
+
+  // input 창 상태 관리 + replace 함수 호출
   const handleInputChange = (event, validType = "") => {
+    console.log("handleInputChange() 호출");
+    // 조합형 문자일 경우 그냥 리턴
     if (event.nativeEvent.isComposing) {
       return;
     } else {
-      console.log("handleInputChange() 호출");
+      // 조합형 문자가 아닐 경우 REPLACE 함수 호출
       let { name, value } = event.target;
-      // replace 함 값 다시 값에 할당해주는 방법
+      // validType 이 주어진 경우 replace 하기
       if (validType) {
-        console.log("validType", validType);
         const filteredValue = value.replace(REPLACE_VALID[validType], "");
         setFormData({ ...formData, [name]: filteredValue });
       } else {
+        // 아닌 경우 바로 그냥 formDate에 넣어버려
         setFormData({ ...formData, [name]: value });
       }
     }
   };
 
-  // 사용자 이름 & 이메일 중복 확인
+  // 비밀번호 자식 컴포넌트에서 가져온 값 저장
+  const handlePasswordChange = (password) => {
+    console.log("handlePasswordChange() 호출");
+    setFormData({ ...formData, password: password });
+  };
+
+  // api :  사용자 이름 & 이메일 중복 확인
   const checkDuplicate = async (e) => {
     console.log("checkDuplicate() 호출");
     e.preventDefault();
@@ -64,33 +70,24 @@ export const JoinForm = () => {
     } else {
       requsetURL = `/api/email/${formData.email}/check`;
     }
-
     try {
-      await api.get(requsetURL);
+      const response = await api.get(requsetURL);
     } catch (error) {
       console.log("response.status :", error.response.status);
     }
   };
 
-  // 회원가입 버튼 클릭 시 폼 제출
+  // api : 회원가입 버튼 클릭 시 폼 제출
   const handleFormSubmit = async (e) => {
     console.log("handleFormSubmit() 호출");
     e.preventDefault();
     try {
       console.log(formData);
-      await api.post(`/api/join`, formData, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await api.post(`/api/join`, formData);
     } catch (error) {
       console.log("response.status :", error.response.status);
     }
   };
-
-  const handlePasswordChange = (password) => {
-    console.log("handlePasswordChange() 호출");
-    setFormData({ ...formData, password: password });
-  };
-
   return (
     <>
       <div className="bg-gradient-primary">
@@ -106,40 +103,31 @@ export const JoinForm = () => {
                       <h1 className="h4 text-gray-900 mb-4">회원가입</h1>
                     </div>
                     {/* form start */}
-                    <form className="user" onSubmit={onValid}>
+                    <form className="user">
                       <div className="form-group">
                         <input
                           type="text"
                           name="username"
+                          // onKeyUp={handleInputChange}
                           onChange={(e) => handleInputChange(e, "username")}
                           onBlur={checkDuplicate}
-                          // {...register("username", {
-                          //   required: true,
-                          //   pattern: /^[a-zA-Z0-9]{3,10}$/,
-                          // })}
                           className="form-control form-control-user"
                           placeholder="이름"
+                          ref={usernameRef}
                           value={formData.username}
                         />
-                        {errors.name && errors.name.type === "required" && (
-                          <p>this name field is required</p>
-                        )}
-                        {errors.name && errors.name.type === "maxLength" && (
-                          <p>your input exceed maximun length</p>
-                        )}
                       </div>
                       <div className="form-group row">
                         <div className="col-sm-9 mb-3 mb-sm-0">
                           <input
                             type="email"
                             name="email"
-                            // {...register("email", {
-                            //   required: true,
-                            //   pattern: /^\S+@\S+$/i,
-                            // })}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e, "email")}
+                            onBlur={checkDuplicate}
                             className="form-control form-control-user"
                             placeholder="이메일주소"
+                            ref={emailRef}
+                            value={formData.email}
                           />
                         </div>
                         <div className="col-sm-3">
@@ -158,9 +146,11 @@ export const JoinForm = () => {
                         <input
                           type="phone"
                           name="phone"
-                          onChange={handleInputChange}
+                          onChange={(e) => handleInputChange(e, "phone")}
                           className="form-control form-control-user"
                           placeholder="휴대폰번호"
+                          ref={phoneRef}
+                          value={formData.phone}
                         />
                       </div>
                       <div className="form-group row">
@@ -201,6 +191,7 @@ export const JoinForm = () => {
                         <div className="col-sm-6">
                           <input
                             type="note"
+                            name="note"
                             defaultValue={formData.note}
                             onChange={handleInputChange}
                             className="form-control form-control-user"
@@ -208,10 +199,9 @@ export const JoinForm = () => {
                           />
                         </div>
                       </div>
-
                       <button
-                        // onClick={handleFormSubmit}
-                        type="submit"
+                        onClick={handleFormSubmit}
+                        // type="submit"
                         className="btn btn-primary btn-user btn-block"
                       >
                         Register Account
@@ -219,7 +209,7 @@ export const JoinForm = () => {
                     </form>
                     <hr />
                     <div className="text-center">
-                      <Link className="small" to="/join">
+                      <Link className="small" to="/login">
                         Already have an account? Login!
                       </Link>
                     </div>

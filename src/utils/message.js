@@ -24,10 +24,10 @@ const messageEx = {
 
 // 정규식 불일치 시 hint msg
 const hintMsg = {
-  username: "{name}는 최소 3자 이상 및 10자 이내입니다.",
-  password: "{name}는 문자와 특수문자 조합 8 ~ 15 자리 이상이어야 합니다.",
-  email: "{name} 형식이 올바르지 않습니다.",
-  phone: "{name} 형식이 올바르지 않습니다.",
+  username: "사용자 아이디는 최소 3자 이상 및 10자 이내입니다.",
+  password: "비밀번호는 문자와 특수문자 조합 8 ~ 15 자리 이상이어야 합니다.",
+  email: "이메일 형식이 올바르지 않습니다.",
+  phone: "휴대전화번호 형식이 올바르지 않습니다.",
 };
 
 // alert 메시지 만드는 함수
