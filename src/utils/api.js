@@ -34,6 +34,9 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 400) {
       alert(error.response.data.msg);
     }
+    if (error.response && error.response.status === 401) {
+      alert(error.response.data.msg);
+    }
     return Promise.reject(error);
   }
 );

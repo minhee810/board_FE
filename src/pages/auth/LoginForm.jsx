@@ -40,6 +40,21 @@ const LoginForm = () => {
 
     try {
       const response = await api.post(`/api/login`, formData);
+      console.log("response : ", response);
+      console.log(response.data.data);
+      if (response.data.data) {
+        localStorage.setItem("LS_SESSION_ID", response.data.data);
+        // 사용자의 정보를 context에 저장
+      }
+      // 로그인 요청 시 해야할 일
+      /**
+       * 가장 중요 : 사용자의 정보를 받아온다.
+       * 1. 쿠키를 함께 서버로 전송
+       * 2. 서버에서 쿠키가 존재하는지 확인
+       * 3. 쿠키가 이미 존재할 경우 쿠키의 유효성을 검증 후 서버로 전송하여 사용자의 로그인 정보를 받아온다.
+       * 4. 받아온 사용자의 정보를 localStorage에 저장한다.
+       * 5. localStorage에 저장한 사용자의 정보를 context 에 저장한다.
+       */
       navigate("/");
     } catch (error) {
       console.log("error.status :", error.response.status);

@@ -10,6 +10,8 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await axios.post("/api/logout");
+      localStorage.removeItem("LS_SESSION_ID");
+      // setUser(null);
     } catch {}
   };
   const handleDropdown = () => {
