@@ -1,19 +1,33 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useRouteError } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { UserObjContext } from "../context/UserObjContext";
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { userData, setUserData } = useContext(UserObjContext);
+  const navigate = useNavigate();
+
+  console.log("userData : ", userData);
 
   const handleLogout = async () => {
     try {
-      await axios.post("/api/logout");
-      localStorage.removeItem("LS_SESSION_ID");
-      // setUser(null);
-    } catch {}
+      await axios.get("/api/logout");
+      setUserData({});
+      localStorage.removeItem("userData");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  // useEffect 를 사용해서 사용자의 정보가 변경되면 컴포넌트를 리랜더링 시키자
+
+  useEffect(() => {});
+
   const handleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -39,7 +53,6 @@ export default function Header() {
           {/** Nav Item - User Information true -> show  */}
           <li className={`nav-item dropdown no-arrow ${isOpen ? "show" : ""}`}>
             <Link
-              to=""
               onClick={handleDropdown}
               className="nav-link dropdown-toggle"
               id="userDropdown"
@@ -49,7 +62,7 @@ export default function Header() {
               aria-expanded={isOpen}
             >
               <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                닉네임
+                {userData.username}
               </span>
               <img
                 className="img-profile rounded-circle"
@@ -59,29 +72,32 @@ export default function Header() {
             </Link>
 
             {/**  Dropdown - User Information */}
-            <div
-              className={`dropdown-menu dropdown-menu-right shadow animated--grow-in ${
-                isOpen ? "show" : ""
-              }`}
-              aria-labelledby="userDropdown"
-            >
-              <Link to="/profile" className="dropdown-item">
-                <FontAwesomeIcon icon={faUser} />
-                Profile
-              </Link>
-
-              <div className="dropdown-divider"></div>
-              <button
-                to="/logout"
-                onClick={handleLogout}
-                className="dropdown-item"
-                data-toggle="modal"
-                data-target="#logoutModal"
+            {userData.userId == null ? (
+              ""
+            ) : (
+              <div
+                className={`dropdown-menu dropdown-menu-right shadow animated--grow-in ${
+                  isOpen ? "show" : ""
+                }`}
+                aria-labelledby="userDropdown"
               >
-                <FontAwesomeIcon icon={faRightFromBracket} />
-                Logout
-              </button>
-            </div>
+                <Link to="/profile" className="dropdown-item">
+                  <FontAwesomeIcon icon={faUser} />
+                  Profile
+                </Link>
+
+                <div className="dropdown-divider"></div>
+                <button
+                  onClick={handleLogout}
+                  className="dropdown-item"
+                  data-toggle="modal"
+                  data-target="#logoutModal"
+                >
+                  <FontAwesomeIcon icon={faRightFromBracket} />
+                  Logout
+                </button>
+              </div>
+            )}
           </li>
         </ul>
       </nav>

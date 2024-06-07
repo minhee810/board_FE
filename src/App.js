@@ -8,7 +8,7 @@ import LoginForm from "./pages/auth/LoginForm";
 import BoardTables from "./pages/board/BoardTables";
 import BoardDetail from "./pages/board/BoardDetail";
 import BoardWrite from "./pages/board/BoardWrite";
-import { UserContextProvider } from "./context/UserContext";
+import { UserContextProvider } from "./context/UserObjContext";
 
 function App() {
   return (

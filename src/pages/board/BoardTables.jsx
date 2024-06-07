@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useUserContext } from "../../context/UserContext";
+import { useUserContext } from "../../context/UserObjContext";
 
 const BoardTables = () => {
-  const { user } = useUserContext();
-
   return (
     <>
       <h1 className="h3 mb-2 text-gray-800">게시판</h1>
