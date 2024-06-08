@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import PostCode from "../../services/PostCode";
 import api from "../../utils/api";
 import PasswordCheck from "../../components/PasswordCheck";
-import { useForm } from "react-hook-form";
 import {
   REPLACE_VALID,
   createMessage,

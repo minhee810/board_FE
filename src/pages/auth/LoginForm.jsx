@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
+import { UserObjContext } from "../../context/UserObjContext";
 
 const LoginForm = () => {
   const [saveIDFlag, setSaveIDFlag] = useState(false);
   const LS_KEY_ID = "LS_KEY_ID";
   const LS_KEY_SAVE_ID_FLAG = "LS_KEY_SAVE_ID_FLAG";
   const navigate = useNavigate();
-
+  const { userData, setUserData } = useContext(UserObjContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -42,12 +43,12 @@ const LoginForm = () => {
       const response = await api.post(`/api/login`, formData);
 
       let newUserData = response.data.data;
-      console.log("newUserData : ", newUserData);
 
       if (newUserData) {
         localStorage.setItem("userData", JSON.stringify(response.data.data));
+        setUserData(newUserData);
       }
-      // navigate("/");
+      navigate("/");
     } catch (error) {
       console.log("error.status :", error.response.status);
     }
@@ -82,6 +83,9 @@ const LoginForm = () => {
     if (data !== null) setFormData({ email: data });
   }, []);
 
+  useEffect(() => {
+    setUserData(userData);
+  });
   return (
     <div className="bg-gradient-primary">
       <div className="container">

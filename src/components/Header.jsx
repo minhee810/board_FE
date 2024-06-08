@@ -1,23 +1,28 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useRouteError } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { UserObjContext } from "../context/UserObjContext";
 
+/**
+ *
+ * 사용자의 정보가 없을 경우  즉, userId 가  null 일 경우 guest 로 설정
+ */
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { userData, setUserData } = useContext(UserObjContext);
   const navigate = useNavigate();
 
-  console.log("userData : ", userData);
-
   const handleLogout = async () => {
     try {
       await axios.get("/api/logout");
-      setUserData({});
       localStorage.removeItem("userData");
+
+      console.log("setUserData Guest 로 변경");
+      setUserData({ username: "Guest" }); // user의 정보가 변했으니까 헤더 컴포넌트가 재 랜더링이 되어야 하는데, 재 랜더링 되면 그 값이 사라지게 되는데 나는 값이 사라지는 게 아닌 Guest의 기본 값이 다시 전해졋으면 좋겠음.
+      // 그럼 UserObjcontext 가 다시 호출되어야 하는건가?
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -25,8 +30,15 @@ export default function Header() {
   };
 
   // useEffect 를 사용해서 사용자의 정보가 변경되면 컴포넌트를 리랜더링 시키자
+  /**
+   * 로그인 하면 사용자의 정보를
+   */
 
-  useEffect(() => {});
+  useEffect(() => {
+    console.log("mount 시 userData : ", userData);
+    setUserData(userData);
+    // header 에 사용자의 이름이 바로 적용되지 않고 새로고침해야 이름이 적용되는 이유
+  }, [userData]);
 
   const handleDropdown = () => {
     setIsOpen(!isOpen);

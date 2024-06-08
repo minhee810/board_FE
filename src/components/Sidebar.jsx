@@ -71,7 +71,7 @@ export default function Sidebar({ onToggle }) {
 
         {/*<!-- Nav Item - Tables -->*/}
         <li className="nav-item active">
-          <Link to="." className="nav-link">
+          <Link to="/" className="nav-link">
             <FontAwesomeIcon icon={faTable} style={{ marginRight: "4px" }} />
             <span>Tables</span>
           </Link>
