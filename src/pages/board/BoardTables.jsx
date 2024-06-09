@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useUserContext } from "../../context/UserObjContext";
+import { boardList } from "../../services/board/BoardTableService";
 
 const BoardTables = () => {
+  const [list, setList] = useState([]);
+
+  async function getBoardList() {
+    try {
+      const response = await boardList();
+      console.log("response :", response.data.content);
+      // setBoardList(response)
+    } catch (error) {
+      console.log("error :", error);
+    }
+  }
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 기본 목록 가져오기
+    getBoardList();
+  }, []);
+
   return (
     <>
       <h1 className="h3 mb-2 text-gray-800">게시판</h1>
