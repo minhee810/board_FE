@@ -1,32 +1,52 @@
 import React, { useState } from "react";
 import api from "../../utils/api";
+import axios from "axios";
 
 const BoardWrite = () => {
   const userId = localStorage.getItem("userId");
-  const [formData, setFormData] = useState({
+  const [files, setFiles] = useState([]);
+  const [data, setData] = useState({
     title: "",
     content: "",
-    userId: "",
   });
 
   const handelInputChange = (e) => {
     console.log("handelInputChange() 호출");
-    setFormData({
-      ...formData,
+    setData({
+      ...data,
       [e.target.name]: e.target.value,
     });
   };
   const handleWrite = async (e) => {
     console.log("handleWrite() 호출");
     e.preventDefault();
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
+    formData.append("dto", JSON.stringify(data));
+    console.log("formData", formData);
     try {
-      console.log("formData : ", formData);
-      const response = await api.post(`/api/write`, formData);
+      const response = await axios.post(`/api/write`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log("response : ", response);
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleFilesChange = (e) => {
+    // setFormData({
+    //   ...formData,
+    //   [e.target.name]: Array.from(e.target.files),
+    // });
+    // console.log("name : ", e.target.name);
+    setFiles(e.target.files);
+  };
+
   return (
     <>
       {/* <!-- Begin Page Content --> */}
@@ -37,7 +57,12 @@ const BoardWrite = () => {
         <div className="card shadow mb-4 h-75">
           <div className="card-body">
             {/* <!-- Basic Card Example --> */}
-            <form action="#" method="post" className="h-100">
+            <form
+              action="#"
+              method="post"
+              className="h-100"
+              onSubmit={handleWrite}
+            >
               <div className="card shadow mb-4 h-100">
                 <div className="card-header py-3">
                   <div className="col-sm-11 float-left">
@@ -48,7 +73,7 @@ const BoardWrite = () => {
                       name="title"
                       className="form-control"
                       placeholder="제목"
-                      value={formData.title}
+                      value={data.title}
                     />
                   </div>
                   <button
@@ -68,8 +93,18 @@ const BoardWrite = () => {
                     className="form-control h-100"
                     placeholder="내용"
                     style={{ resize: "none" }}
-                    value={formData.content}
-                  />
+                    value={data.content}
+                  ></textarea>
+                  {/* <!-- file upload --> */}
+                  <div className="multiple-upload">
+                    <input
+                      type="file"
+                      name="files"
+                      multiple
+                      onChange={handleFilesChange}
+                    />
+                    <div id="file-list"></div>
+                  </div>
                 </div>
               </div>
             </form>
