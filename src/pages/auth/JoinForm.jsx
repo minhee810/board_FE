@@ -3,11 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import PostCode from "../../services/PostCode";
 import api from "../../utils/api";
 import PasswordCheck from "../../components/PasswordCheck";
-import {
-  REPLACE_VALID,
-  createMessage,
-  regExpFields,
-} from "../../utils/validation";
+import { REPLACE_VALID } from "../../utils/validation";
 
 export const JoinForm = () => {
   const navigate = useNavigate();
@@ -161,6 +157,7 @@ export const JoinForm = () => {
                             defaultValue={formData.address}
                             className="form-control form-control-user"
                             placeholder="주소"
+                            readOnly
                           />
                         </div>
                         <div className="col-sm-3">
@@ -185,6 +182,7 @@ export const JoinForm = () => {
                             onChange={handleInputChange}
                             className="form-control form-control-user"
                             placeholder="우편번호"
+                            readOnly
                           />
                         </div>
                         <div className="col-sm-6">

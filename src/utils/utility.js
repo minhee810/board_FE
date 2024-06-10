@@ -1,8 +1,8 @@
 // 공통 널값 체크
-const isRequired = (value) => (value === "" ? false : true);
+export const isRequired = (value) => (value === "" ? false : true);
 
 // 날짜 포맷팅 함수
-function dateFormat(date) {
+export function dateFormat(date) {
   var year = date.substring(0, 4);
   var month = date.substring(5, 7);
   var day = date.substring(8, 10);
@@ -11,11 +11,11 @@ function dateFormat(date) {
   return fmtDate;
 }
 
-function padTwoDigits(num) {
+export function padTwoDigits(num) {
   return num.toString().padStart(2, "0");
 }
 
-function getFormattedDate(org) {
+export function getFormattedDate(org) {
   const date = new Date(org);
 
   return (
@@ -34,8 +34,6 @@ function getFormattedDate(org) {
 }
 
 // 값 일치 체크
-function isMatch(str1, str2) {
+export function isMatch(str1, str2) {
   return str1 === str2;
 }
-
-export { isMatch, isRequired };

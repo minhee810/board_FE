@@ -20,7 +20,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route index element={<BoardTables />} />
               <Route path=":id" element={<BoardTables />} />
-              <Route path="detail" element={<BoardDetail />} />
+              <Route path="/detail/:boardId" element={<BoardDetail />} />
               <Route path="write" element={<BoardWrite />} />
             </Route>
             <Route path="/join" element={<JoinForm />} />

@@ -1,10 +1,47 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import CommentList from "../../components/CommentList";
 import CommentWrite from "../../components/CommentWrite";
 import "../../assets/styles/board/board-detail.css";
+import { boardDetail } from "../../services/board/BoardTableService";
+import axios from "axios";
+import api from "../../utils/api";
 
 const BoardDetail = () => {
+  const { boardId } = useParams(); // 동적 라우팅, 클릭한 컴포넌트의 id값 받아옴
+  const [data, setData] = useState([]);
+  const [files, setFiles] = useState([]);
+
+  async function getBoardDetail(boardId) {
+    try {
+      const response = await boardDetail(boardId);
+      setData(response.data.data.detail);
+      setFiles(response.data.data.files);
+    } catch (error) {
+      console.log("error :", error);
+    }
+  }
+
+  async function downloadFile(orgFileName, saveFileName) {
+    try {
+      const response = await api.get(
+        `/fileDownload/${boardId}/${saveFileName}/${orgFileName}`
+      );
+      console.log("downloadFile()", response);
+    } catch (error) {
+      console.log("error : ", error);
+    }
+  }
+  const handleFileDownload = (orgFileName, saveFileName) => {
+    console.log("handleFileDownload 호출");
+    // value='/fileDownload/${detail.boardId}/${files.saveFileName}/${files.orgFileName}'
+    downloadFile(orgFileName, saveFileName);
+  };
+
+  useEffect(() => {
+    getBoardDetail(boardId);
+  }, [boardId]);
+
   return (
     <>
       {/* <!-- Page Heading --> */}
@@ -16,7 +53,7 @@ const BoardDetail = () => {
           <div className="card shadow mb-4 h-100">
             <div className="card-header py-3">
               <h6 className="m-0 font-weight-bold text-primary btn float-left">
-                test 제목
+                {data.title}
               </h6>
               <a href="modify.html">
                 <button
@@ -31,20 +68,22 @@ const BoardDetail = () => {
               </button>
             </div>
             <div className="card-body navbar-nav-scroll custom-height">
-              The styling for this basic card example is created by using
-              default Bootstrap utility classNamees. By using utility
-              classNamees, the style of the card component can be easily
-              modified with no need for any custom CSS! The styling for this
-              basic card example is created by using default Bootstrap utility
-              classNamees. By usin
+              {data.content}
             </div>
             <div className="card-body fileUpLoad">
               <label className="fileUpLoadBtn">파일</label>
-              <div id="fileName" className="fileName">
-                <Link to="#" data-savename="1711943118813_listener.ora">
-                  listener.ora
-                </Link>
-              </div>
+
+              {files.map((file) => (
+                <div key={file.uploadFileId} id="fileName" className="fileName">
+                  <Link
+                    onClick={() =>
+                      handleFileDownload(file.orgFileName, file.saveFileName)
+                    }
+                  >
+                    {file.orgFileName}
+                  </Link>
+                </div>
+              ))}
             </div>
 
             <div className="card-footer">

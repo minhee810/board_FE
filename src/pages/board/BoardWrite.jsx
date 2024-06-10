@@ -1,6 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
+import api from "../../utils/api";
 
 const BoardWrite = () => {
+  const userId = localStorage.getItem("userId");
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+    userId: "",
+  });
+
+  const handelInputChange = (e) => {
+    console.log("handelInputChange() 호출");
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleWrite = async (e) => {
+    console.log("handleWrite() 호출");
+    e.preventDefault();
+    try {
+      console.log("formData : ", formData);
+      const response = await api.post(`/api/write`, formData);
+      console.log("response : ", response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       {/* <!-- Begin Page Content --> */}
@@ -16,30 +42,33 @@ const BoardWrite = () => {
                 <div className="card-header py-3">
                   <div className="col-sm-11 float-left">
                     <input
+                      onChange={handelInputChange}
                       type="text"
                       id="a1"
+                      name="title"
                       className="form-control"
                       placeholder="제목"
+                      value={formData.title}
                     />
                   </div>
-                  <a href="tables.html">
-                    <button
-                      type="button"
-                      className="btn btn-primary btn float-right ml-1"
-                    >
-                      작성완료
-                    </button>
-                  </a>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn float-right ml-1"
+                    onClick={handleWrite}
+                  >
+                    작성완료
+                  </button>
                 </div>
                 <div className="card-body h-100">
                   <textarea
-                    id="a3"
-                    name="a3"
+                    onChange={handelInputChange}
+                    name="content"
                     cols={30}
                     rows={15}
                     className="form-control h-100"
                     placeholder="내용"
-                    // style="resize: none"
+                    style={{ resize: "none" }}
+                    value={formData.content}
                   />
                 </div>
               </div>

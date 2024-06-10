@@ -24,10 +24,14 @@ api.interceptors.response.use(
     if (code === 1) {
       alert(response.data.msg);
     }
+    // message 를 alert로 띄우지 않아도 되는 경우에 응답 코드 2로 전송
+    if (code === 2) {
+      console.log(response.data);
+    }
     return response;
   },
   function (error) {
-    console.log("reponse interceptor() 호출");
+    console.log("error interceptor() 호출");
     if (error.response && error.response.status === 409) {
       alert(error.response.data.msg);
     }
