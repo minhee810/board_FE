@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import api from "../../utils/api";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const BoardWrite = () => {
+  const navigator = useNavigate();
   const [data, setData] = useState({
     title: "",
     content: "",
@@ -28,14 +30,17 @@ const BoardWrite = () => {
     }
     formData.append("title", data.title);
     formData.append("content", data.content);
-
-    try {
-      const response = await axios.post(`/api/write`, formData, {
-        withCredentials: true,
-      });
-      console.log("response : ", response);
-    } catch (error) {
-      console.log(error);
+    if (window.confirm("게시글을 저장하시겠습니까? ")) {
+      try {
+        const response = await axios.post(`/api/write`, formData, {
+          withCredentials: true,
+        });
+        console.log("response : ", response);
+        alert("게시글을 저장했습니다.");
+        navigator("/");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

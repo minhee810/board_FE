@@ -45,7 +45,7 @@ const LoginForm = () => {
       let newUserData = response.data.data;
 
       if (newUserData) {
-        localStorage.setItem("userData", JSON.stringify(response.data.data));
+        sessionStorage.setItem("userData", JSON.stringify(response.data.data));
         setUserData(newUserData);
       }
       navigate("/");

@@ -14,7 +14,7 @@ const initData = {
  */
 export const UserContextProvider = ({ children }) => {
   console.log("UserContextProvide 랜더링");
-  const storedUserData = localStorage.getItem("userData");
+  const storedUserData = sessionStorage.getItem("userData");
   let data = storedUserData ? JSON.parse(storedUserData) : initData;
 
   const [userData, setUserData] = useState(data);

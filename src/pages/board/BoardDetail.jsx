@@ -44,7 +44,7 @@ const BoardDetail = () => {
   const downloadFile = async (orgFileName, saveFileName) => {
     try {
       const response = await api.get(
-        `/fileDownload/${boardId}/${saveFileName}/${orgFileName}`
+        `/api/fileDownload/${boardId}/${saveFileName}/${orgFileName}`
       );
       const url = window.URL.createObjectURL(new Blob([response.data]));
       console.log(url);

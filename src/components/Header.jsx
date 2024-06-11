@@ -18,7 +18,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await axios.get("/logout");
-      localStorage.removeItem("userData");
+      sessionStorage.removeItem("userData");
 
       console.log("setUserData Guest 로 변경");
       setUserData({ username: "Guest" }); // user의 정보가 변했으니까 헤더 컴포넌트가 재 랜더링이 되어야 하는데, 재 랜더링 되면 그 값이 사라지게 되는데 나는 값이 사라지는 게 아닌 Guest의 기본 값이 다시 전해졋으면 좋겠음.
