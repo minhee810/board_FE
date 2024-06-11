@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { boardList } from "../../services/board/BoardTableService";
 import Pagenation from "../../components/Pagenation";
 import { dateFormat } from "../../utils/utility";
+import WriteButton from "../../components/button/WriteButton";
 
 const BoardTables = () => {
   const [list, setList] = useState([]);
@@ -21,6 +22,10 @@ const BoardTables = () => {
       console.log("error :", error);
     }
   }
+
+  const handleBoardWrite = () => {
+    console.log("handleBoardWrite() 호출");
+  };
 
   const handleBoardDetail = (boardId) => {
     navigate(`/detail/${boardId}`);
@@ -78,11 +83,7 @@ const BoardTables = () => {
                 ))}
               </tbody>
             </table>
-            <Link to="/write">
-              <button type="button" className="btn btn-primary btn float-right">
-                게시글 작성
-              </button>
-            </Link>
+            <WriteButton />
           </div>
         </div>
       </div>

@@ -78,7 +78,7 @@ export const JoinForm = () => {
     e.preventDefault();
     try {
       console.log(formData);
-      await api.post(`/api/join`, formData);
+      await api.post(`/join`, formData);
     } catch (error) {
       console.log("response.status :", error.response.status);
     }

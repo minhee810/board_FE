@@ -17,13 +17,14 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await axios.get("/api/logout");
+      await axios.get("/logout");
       localStorage.removeItem("userData");
 
       console.log("setUserData Guest 로 변경");
       setUserData({ username: "Guest" }); // user의 정보가 변했으니까 헤더 컴포넌트가 재 랜더링이 되어야 하는데, 재 랜더링 되면 그 값이 사라지게 되는데 나는 값이 사라지는 게 아닌 Guest의 기본 값이 다시 전해졋으면 좋겠음.
       // 그럼 UserObjcontext 가 다시 호출되어야 하는건가?
       navigate("/");
+      console.log("userData : ", userData);
     } catch (error) {
       console.log(error);
     }
@@ -37,6 +38,7 @@ export default function Header() {
   useEffect(() => {
     console.log("mount 시 userData : ", userData);
     setUserData(userData);
+    console.log("userData : ", userData);
     // header 에 사용자의 이름이 바로 적용되지 않고 새로고침해야 이름이 적용되는 이유
   }, [userData]);
 

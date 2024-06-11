@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CommentList from "../../components/CommentList";
 import CommentWrite from "../../components/CommentWrite";
@@ -22,19 +22,47 @@ const BoardDetail = () => {
     }
   }
 
-  async function downloadFile(orgFileName, saveFileName) {
+  // async function downloadFile(orgFileName, saveFileName) {
+  //   const fileUrl = `/api/fileDownload/${boardId}/${saveFileName}/${orgFileName}`;
+
+  //   try {
+  //     const response = await api.get(fileUrl, { responseType: "blob" });
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
+  //     console.log(url);
+  //     // console.log(response.data);
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     // a.download = response.da
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     // window.URL.revokeObjectURL(url);
+  //     document.body.removeChild(a);
+  //   } catch (error) {
+  //     console.log("error : ", error);
+  //   }
+  // }
+  const downloadFile = async (orgFileName, saveFileName) => {
     try {
       const response = await api.get(
         `/fileDownload/${boardId}/${saveFileName}/${orgFileName}`
       );
-      console.log("downloadFile()", response);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      console.log(url);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = orgFileName; // 사용자가 입력한 파일 이름 사용
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.log("error : ", error);
+      console.error("Error downloading the file:", error);
     }
-  }
+  };
+
   const handleFileDownload = (orgFileName, saveFileName) => {
     console.log("handleFileDownload 호출");
-    // value='/fileDownload/${detail.boardId}/${files.saveFileName}/${files.orgFileName}'
+    // value='/fileDownload/${detail.boardId}/${files.saveFileName}/${fles.orgFileName}'
     downloadFile(orgFileName, saveFileName);
   };
 
@@ -80,7 +108,7 @@ const BoardDetail = () => {
                       handleFileDownload(file.orgFileName, file.saveFileName)
                     }
                   >
-                    {file.orgFileName}
+                    {file.orgFileName}({file.fileSize}kb)
                   </Link>
                 </div>
               ))}

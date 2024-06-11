@@ -40,7 +40,7 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await api.post(`/api/login`, formData);
+      const response = await api.post(`/login`, formData);
 
       let newUserData = response.data.data;
 

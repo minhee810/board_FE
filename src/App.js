@@ -9,6 +9,7 @@ import BoardTables from "./pages/board/BoardTables";
 import BoardDetail from "./pages/board/BoardDetail";
 import BoardWrite from "./pages/board/BoardWrite";
 import { UserContextProvider } from "./context/UserObjContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -21,7 +22,10 @@ function App() {
               <Route index element={<BoardTables />} />
               <Route path=":id" element={<BoardTables />} />
               <Route path="/detail/:boardId" element={<BoardDetail />} />
-              <Route path="write" element={<BoardWrite />} />
+              {/*로그인한 사용자만 접근 가능하도록 처리*/}
+              <Route element={<PrivateRoute />}>
+                <Route path="/write" element={<BoardWrite />} />
+              </Route>
             </Route>
             <Route path="/join" element={<JoinForm />} />
             <Route path="/login" element={<LoginForm />} />

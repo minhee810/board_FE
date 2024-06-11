@@ -3,11 +3,10 @@ import api from "../../utils/api";
 import axios from "axios";
 
 const BoardWrite = () => {
-  const userId = localStorage.getItem("userId");
-  const [files, setFiles] = useState([]);
   const [data, setData] = useState({
     title: "",
     content: "",
+    files: [],
   });
 
   const handelInputChange = (e) => {
@@ -17,20 +16,22 @@ const BoardWrite = () => {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleWrite = async (e) => {
     console.log("handleWrite() 호출");
+    console.log("넘어갈 데이터들 확인 : ", data);
     e.preventDefault();
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append("files", files[i]);
+    let formData = new FormData();
+
+    for (let i = 0; i < data.files.length; i++) {
+      formData.append("files", data.files[i]);
     }
-    formData.append("dto", JSON.stringify(data));
-    console.log("formData", formData);
+    formData.append("title", data.title);
+    formData.append("content", data.content);
+
     try {
       const response = await axios.post(`/api/write`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        withCredentials: true,
       });
       console.log("response : ", response);
     } catch (error) {
@@ -39,12 +40,10 @@ const BoardWrite = () => {
   };
 
   const handleFilesChange = (e) => {
-    // setFormData({
-    //   ...formData,
-    //   [e.target.name]: Array.from(e.target.files),
-    // });
-    // console.log("name : ", e.target.name);
-    setFiles(e.target.files);
+    setData({
+      ...data,
+      [e.target.name]: Array.from(e.target.files),
+    });
   };
 
   return (

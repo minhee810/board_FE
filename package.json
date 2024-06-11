@@ -29,6 +29,14 @@
     "web-vitals": "^2.1.4"
   },
   "proxy": "http://localhost:8081",
+  "/fileDownload": {
+    "target": "http://localhost:8081",
+    "pathRewrite": {
+      "^/fileDownload": "/fileDownload"
+    }
+  }
+  ,
+  
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

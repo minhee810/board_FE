@@ -15,11 +15,9 @@ const initData = {
 export const UserContextProvider = ({ children }) => {
   console.log("UserContextProvide 랜더링");
   const storedUserData = localStorage.getItem("userData");
-
-  let data = storedUserData ? storedUserData : initData;
+  let data = storedUserData ? JSON.parse(storedUserData) : initData;
 
   const [userData, setUserData] = useState(data);
-
   // 사용자의 정보를 저장
   // const [userData, setUserData] = useState(() => {
   //   console.log("userData useState 랜더링");
