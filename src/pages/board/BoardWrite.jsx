@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import api from "../../utils/api";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const BoardWrite = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState({
     title: "",
     content: "",
@@ -34,6 +36,7 @@ const BoardWrite = () => {
         withCredentials: true,
       });
       console.log("response : ", response);
+      navigate("/");
     } catch (error) {
       console.log(error);
     }
