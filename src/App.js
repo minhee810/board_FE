@@ -10,6 +10,7 @@ import BoardDetail from "./pages/board/BoardDetail";
 import BoardWrite from "./pages/board/BoardWrite";
 import { UserContextProvider } from "./context/UserObjContext";
 import PrivateRoute from "./components/PrivateRoute";
+import { BoardMofify } from "./pages/board/BoardMofify";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               {/*로그인한 사용자만 접근 가능하도록 처리*/}
               <Route element={<PrivateRoute />}>
                 <Route path="/write" element={<BoardWrite />} />
+                <Route path="/modify/:boardId" element={<BoardMofify />} />
               </Route>
             </Route>
             <Route path="/join" element={<JoinForm />} />

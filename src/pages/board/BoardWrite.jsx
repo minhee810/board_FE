@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 const BoardWrite = () => {
   const navigator = useNavigate();
+  const fileListRef = useRef(null);
+  const inputRef = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState();
   const [data, setData] = useState({
     title: "",
     content: "",
@@ -107,7 +109,7 @@ const BoardWrite = () => {
                       multiple
                       onChange={handleFilesChange}
                     />
-                    <div id="file-list"></div>
+                    <div id="file-list" ref={fileListRef}></div>
                   </div>
                 </div>
               </div>
