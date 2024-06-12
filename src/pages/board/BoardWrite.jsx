@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import api from "../../utils/api";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -30,6 +29,7 @@ const BoardWrite = () => {
     }
     formData.append("title", data.title);
     formData.append("content", data.content);
+
     if (window.confirm("게시글을 저장하시겠습니까? ")) {
       try {
         const response = await axios.post(`/api/write`, formData, {
