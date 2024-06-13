@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { UserObjContext } from "../context/UserObjContext";
+import { UserObjContext } from "../../context/UserObjContext";
 
 /**
  *

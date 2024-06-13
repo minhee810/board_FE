@@ -24,6 +24,7 @@ export const downloadFile = async (boardId, orgFileName, saveFileName) => {
     link.parentNode.removeChild(link);
     window.URL.revokeObjectURL(url);
   } catch (error) {
+    alert("죄송합니다. 해당 파일을 서버에서 찾을 수 없습니다.");
     console.error("파일 다운로드 중 오류가 발생했습니다.", error);
   }
 };
@@ -43,6 +44,18 @@ export async function boardUpdate(boardId, formData) {
   try {
     const response = await axios.post(`/api/modify/${boardId}`, formData);
     console.log("service response : ", response);
+    return response;
+  } catch (error) {
+    console.log("service error : ", error);
+  }
+}
+
+export async function boardDelete(boardId) {
+  console.log(boardId);
+
+  try {
+    const response = await api.post(`/api/delete/${boardId}`);
+    console.log("service resonse : ", response);
     return response;
   } catch (error) {
     console.log("service error : ", error);

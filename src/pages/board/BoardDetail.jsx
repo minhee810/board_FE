@@ -1,15 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import CommentList from "../../components/CommentList";
 import CommentWrite from "../../components/CommentWrite";
 import "../../assets/styles/board/board-detail.css";
 import {
+  boardDelete,
   boardDetail,
   downloadFile,
 } from "../../services/board/BoardDetailService";
 import { UserObjContext } from "../../context/UserObjContext";
 
 const BoardDetail = () => {
+  const navigator = useNavigate();
   const { boardId } = useParams(); // 동적 라우팅, 클릭한 컴포넌트의 id값 받아옴
   const [data, setData] = useState([]);
   const [files, setFiles] = useState([]);
@@ -22,6 +24,7 @@ const BoardDetail = () => {
 
   useEffect(() => {
     getBoardDetail(boardId);
+    console.log(userData.userId);
   }, [boardId]);
 
   async function getBoardDetail(boardId) {
@@ -33,6 +36,16 @@ const BoardDetail = () => {
       console.log("error :", error);
     }
   }
+
+  const handleDeleteBoard = async () => {
+    console.log("handleDeleteBoard() 호출");
+
+    if (window.confirm("해당 게시글을 삭제하시겠습니까? ")) {
+      const response = await boardDelete(boardId);
+      console.log(response);
+    }
+    navigator("/");
+  };
 
   return (
     <>
@@ -47,17 +60,25 @@ const BoardDetail = () => {
               <h6 className="m-0 font-weight-bold text-primary btn float-left">
                 {data.title}
               </h6>
-              <Link to={`/modify/${boardId}`}>
-                <button
-                  type="button"
-                  className="btn btn-primary btn float-right ml-1"
-                >
-                  수정
-                </button>
-              </Link>
-              <button type="button" className="btn btn-danger btn float-right">
-                삭제
-              </button>
+              {userData.userId === data.writer ? (
+                <>
+                  <Link to={`/modify/${boardId}`}>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn float-right ml-1"
+                    >
+                      수정
+                    </button>
+                  </Link>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn float-right"
+                    onClick={handleDeleteBoard}
+                  >
+                    삭제
+                  </button>
+                </>
+              ) : null}
             </div>
             <div className="card-body navbar-nav-scroll custom-height">
               {data.content}
@@ -97,29 +118,9 @@ const BoardDetail = () => {
             </div>
 
             <div className="card-footer">
-              <form action="#" id="replyForm" name="replyForm">
-                <input type="hidden" name="boardNo" value="1" />
-                <input type="hidden" name="parentCommentNo" value="0" />
-                <input type="hidden" name="commentNo" value="0" />
-                <ul
-                  id="commentDiv"
-                  style={{
-                    maxHeight: "500px",
-                    overflowY: "scroll",
-                    overflowX: "hidden",
-                  }}
-                >
-                  <CommentList />
-                </ul>
-              </form>
-              <form
-                action="#"
-                className="flex"
-                id="commentForm"
-                name="commentForm"
-              >
-                <CommentWrite />
-              </form>
+              <CommentList boardId={boardId} />
+
+              <CommentWrite boardId={boardId} />
             </div>
           </div>
         </div>

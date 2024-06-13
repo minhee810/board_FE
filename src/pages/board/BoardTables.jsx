@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { boardList } from "../../services/board/BoardTableService";
-import Pagenation from "../../components/Pagenation";
+import Pagenation from "../../components/layout/Pagenation";
 import { dateFormat } from "../../utils/utility";
 import WriteButton from "../../components/button/WriteButton";
 

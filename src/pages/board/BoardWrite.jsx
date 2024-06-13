@@ -1,6 +1,6 @@
 import React from "react";
 
-import BoardForm from "./BoardForm";
+import BoardForm from "../../components/board/BoardForm";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import api from "../../utils/api";

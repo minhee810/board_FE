@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
   // formData 초기값 설정
   const [data, setData] = useState(initDetail);
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([]); // 기존 파일 배열
   const [fileIdList, setFileIdList] = useState([]);
   const [empFiles, setEmpFiles] = useState([]); // 화면 보여주기 용
   const { userData, setUserData } = useContext(UserObjContext);
@@ -16,11 +16,8 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
   // 각 필드에 초깃 값을 할당
   // 의존성 배열을 추가하는 이유 : 부모가 넘겨준 props가 변경될 때마다 재 랜더링을 해서 상태변경을 시켜주기 위해
   useEffect(() => {
-    setData(initDetail);
-    setFiles(fileList);
-    console.log("fileList : ", fileList);
-    // setData({ files: fileList });
-    // setEmpFiles(fileList);
+    setData(initDetail); // 기존 제목, 내용 + 새로 추가되는 파일 데이터 보관
+    setFiles(fileList); // 기존 파일
   }, [initDetail, fileList]);
 
   // 입력값 변경 체크
@@ -47,8 +44,6 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
       ...data,
       [e.target.name]: newFilesArray,
     });
-
-    // setEmpFiles((prevEmpFiles) => [...prevEmpFiles, ...newFilesArray]); // 화면에 보여주기 위해 기존의 파일 배열에 추가 // 화면에 보여주기 위해 기존의 파일 배열에 추가
   }; /// ...  하는 이유 배열에 배열을 추가하는 것이기 땨문에 중첩을 피하기 위해 다음과 같이 표기
 
   // 제출 버튼 : 부모 컴포넌트로 값을 넘기기 예를 들면, 수정페이지, 작성페이지, 상세보기 페이지
@@ -57,27 +52,6 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
     onSubmit({ ...data, fileIdList });
   };
 
-  // const handleDeleteFile = (uploadFileId) => {
-  //   // 삭제할 파일의 아이디
-  //   console.log(uploadFileId);
-  //   // 파일 아이디 리스트에서 기존의 리스트 + 파라미터로 넘어온 파일 아이디 저장
-  //   // 비동기 적으로 가져오는 문제를 해결하기 위해 아이디를 가져와 리스트를 변경해주는 부분을 다음과 같이 처리
-  //   setFileIdList((prevFileList) => {
-  //     const updateFileList = [...prevFileList, uploadFileId];
-  //     console.log("updateFileLsit : ", updateFileList);
-  //     return updateFileList;
-  //   });
-
-  //   const newFileList = empFiles.filter(
-  //     // 사용자가 선택한 파일 아이디만 제외하고 파일 객체를 다시 저장
-  //     (file) => file.uploadFileId !== uploadFileId
-  //   );
-  //   console.log("newFileList : ", newFileList);
-  //   // // 임시 파일 리스트의 값만 변경해준다. 새로 파일 배열에 넣으면 서버로 날아가기 때문 임시 파일 리스트 생성
-  //   setEmpFiles(newFileList);
-  //   // 삭제할 파일의 아이디를 배열에 저장해서 서버로 보내고,
-  //   // 화면에서도 파일이 보이지 않게 처리해야함.
-  // };
   const handleDeleteNewFile = (deletedId) => {
     console.log("파일들:", data.files);
     console.log("deletedId : ", deletedId);
@@ -99,7 +73,8 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
   const handleDeleteExistFile = (deletedId) => {
     console.log("파일들:", files);
     console.log("deletedId : ", deletedId);
-
+    // 파일 아이디 리스트에서 기존의 리스트 + 파라미터로 넘어온 파일 아이디 저장
+    // 비동기 적으로 가져오는 문제를 해결하기 위해 아이디를 가져와 리스트를 변경해주는 부분을 다음과 같이 처리
     setFileIdList((prevFileList) => {
       const deleteFileIdList = [...prevFileList, deletedId];
       console.log("deleteFileIdList : ", deleteFileIdList);

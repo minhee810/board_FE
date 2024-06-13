@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import BoardForm from "./BoardForm";
+import BoardForm from "../../components/board/BoardForm";
 import { useNavigate, useParams } from "react-router-dom";
 import { boardDetail } from "../../services/board/BoardDetailService";
 import axios from "axios";

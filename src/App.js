@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Layout from "./components/Layout";
+import Layout from "./components/layout/Layout";
 import { JoinForm } from "./pages/auth/JoinForm";
 import "./assets/styles/sb-admin-2.css";
 import "./assets/styles/sb-admin-2.min.css";
@@ -27,8 +27,6 @@ function App() {
               {/*로그인한 사용자만 접근 가능하도록 처리*/}
               <Route element={<PrivateRoute />}>
                 <Route path="/write" element={<BoardWrite />} />
-                {/* <Route path="/save" element={<BoardSave />} /> */}
-
                 <Route path="/modify/:boardId" element={<BoardModify />} />
               </Route>
             </Route>
