@@ -32,7 +32,6 @@ export const downloadFile = async (boardId, orgFileName, saveFileName) => {
 export async function boardDetail(boardId) {
   try {
     const response = await api.get(`/detail/` + boardId);
-    console.log("response : ", response);
     return response;
   } catch (error) {
     console.log("service error : ", error);
@@ -42,7 +41,6 @@ export async function boardDetail(boardId) {
 export async function boardUpdate(boardId, formData) {
   console.log(boardId, formData);
   try {
-    console.log("service 왓니? ");
     const response = await axios.post(`/api/modify/${boardId}`, formData);
     console.log("service response : ", response);
     return response;

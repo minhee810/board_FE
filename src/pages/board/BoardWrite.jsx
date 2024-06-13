@@ -1,15 +1,16 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+
 const BoardWrite = () => {
   const navigator = useNavigate();
-  const fileListRef = useRef(null);
-  const inputRef = useRef(null);
-  const [selectedFiles, setSelectedFiles] = useState();
+  const [fileList, setFileList] = useState([]);
+  const [fileIdList, setFileIdList] = useState([]);
+
   const [data, setData] = useState({
     title: "",
     content: "",
-    files: [],
   });
 
   const handelInputChange = (e) => {
@@ -21,22 +22,31 @@ const BoardWrite = () => {
   };
 
   const handleWrite = async (e) => {
-    console.log("handleWrite() 호출");
-    console.log("넘어갈 데이터들 확인 : ", data);
     e.preventDefault();
     let formData = new FormData();
+    console.log("data :", data);
 
     for (let i = 0; i < data.files.length; i++) {
-      formData.append("files", data.files[i]);
+      console.log(data.files);
+      formData.append("files", data.files[i].file);
     }
+    // if (data.files && data.files.length > 0) {
+    //   data.files.forEach((file) => {
+    //     console.log("file", file);
+    //     formData.append("files", file);
+    //   });
+    // }
     formData.append("title", data.title);
     formData.append("content", data.content);
 
     if (window.confirm("게시글을 저장하시겠습니까? ")) {
       try {
         const response = await axios.post(`/api/write`, formData, {
-          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
+        console.log("formData : ", formData);
         console.log("response : ", response);
         alert("게시글을 저장했습니다.");
         navigator("/");
@@ -47,10 +57,35 @@ const BoardWrite = () => {
   };
 
   const handleFilesChange = (e) => {
+    console.log("파일 추가 시 event");
+    const newFilesArray = Array.from(e.target.files).map((file) => ({
+      id: uuidv4(),
+      file,
+    }));
+    console.log("newFileArray", newFilesArray);
     setData({
       ...data,
-      [e.target.name]: Array.from(e.target.files),
+      [e.target.name]: newFilesArray,
     });
+    // setFileList({
+    //   ...fileList,
+    //   [e.target.name]: newFilesArray,
+    // });
+  };
+
+  // 삭제할 파일의 uuid를 파라미터로 받아온다.
+  const handleRemoveFile = (deletedId) => {
+    // 원래의 파일 데이터 목록에서 파라미터로 받아온 파일의 아이디와 일치하지 않는 것을 삭제해얗ㅁ.
+    console.log("file들 :", data.files);
+
+    setData((prevEmpFiles) => {
+      const updateFiles = prevEmpFiles.filter(
+        (fileObj) => fileObj.id !== deletedId
+      );
+      console.log("updateFiles : ", updateFiles);
+      return updateFiles;
+    });
+    console.log("deletedId : ", deletedId);
   };
 
   return (
@@ -109,7 +144,28 @@ const BoardWrite = () => {
                       multiple
                       onChange={handleFilesChange}
                     />
-                    <div id="file-list" ref={fileListRef}></div>
+                    {data.files && (
+                      <div id="file-list">
+                        {data.files.map((fileObj) => (
+                          <div
+                            key={fileObj.id}
+                            id="fileName"
+                            className="fileName"
+                          >
+                            <span className="file-item">
+                              {fileObj.file.name}
+                              <button
+                                type="button"
+                                className="delete-button"
+                                onClick={() => handleRemoveFile(fileObj.id)}
+                              >
+                                x
+                              </button>
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
