@@ -5,7 +5,7 @@ import "../../assets/styles/board/load-file.css";
 import { v4 as uuidv4 } from "uuid";
 
 // 초기값은 빈 객체로 초기화
-const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
+const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
   // formData 초기값 설정
   const [data, setData] = useState(initDetail);
   const [files, setFiles] = useState([]);
@@ -17,8 +17,10 @@ const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
   // 의존성 배열을 추가하는 이유 : 부모가 넘겨준 props가 변경될 때마다 재 랜더링을 해서 상태변경을 시켜주기 위해
   useEffect(() => {
     setData(initDetail);
-    // setFiles(fileList);
-    setEmpFiles(fileList);
+    setFiles(fileList);
+    console.log("fileList : ", fileList);
+    // setData({ files: fileList });
+    // setEmpFiles(fileList);
   }, [initDetail, fileList]);
 
   // 입력값 변경 체크
@@ -28,7 +30,7 @@ const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
       ...data,
       [e.target.name]: e.target.value,
     });
-    console.log("empFiles : ", empFiles);
+    console.log("files : ", files);
     // console.log(fileIdList);
   };
 
@@ -48,9 +50,6 @@ const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
 
     // setEmpFiles((prevEmpFiles) => [...prevEmpFiles, ...newFilesArray]); // 화면에 보여주기 위해 기존의 파일 배열에 추가 // 화면에 보여주기 위해 기존의 파일 배열에 추가
   }; /// ...  하는 이유 배열에 배열을 추가하는 것이기 땨문에 중첩을 피하기 위해 다음과 같이 표기
-
-  // 파일이 추가되면 파일을 뿌려주는 부분이 재랜더링 되어야 한다.
-  useEffect(() => {}, [empFiles]);
 
   // 제출 버튼 : 부모 컴포넌트로 값을 넘기기 예를 들면, 수정페이지, 작성페이지, 상세보기 페이지
   const handleSubmit = () => {
@@ -79,9 +78,9 @@ const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
   //   // 삭제할 파일의 아이디를 배열에 저장해서 서버로 보내고,
   //   // 화면에서도 파일이 보이지 않게 처리해야함.
   // };
-  const handleDeleteFile = (deletedId) => {
+  const handleDeleteNewFile = (deletedId) => {
     console.log("파일들:", data.files);
-
+    console.log("deletedId : ", deletedId);
     setData((prevEmpFiles) => {
       // data.files가 배열인지 확인
       const filesArray = Array.isArray(prevEmpFiles.files)
@@ -97,6 +96,28 @@ const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
     console.log("deletedId:", deletedId);
   };
 
+  const handleDeleteExistFile = (deletedId) => {
+    console.log("파일들:", files);
+    console.log("deletedId : ", deletedId);
+
+    setFileIdList((prevFileList) => {
+      const deleteFileIdList = [...prevFileList, deletedId];
+      console.log("deleteFileIdList : ", deleteFileIdList);
+      return deleteFileIdList;
+    });
+
+    setFiles((prevEmpFiles) => {
+      // data.files가 배열인지 확인
+      const filesArray2 = Array.isArray(prevEmpFiles) ? prevEmpFiles : [];
+
+      const updateFiles = filesArray2.filter(
+        (file) => file.uploadFileId !== deletedId
+      );
+      console.log("updateFiles:", updateFiles);
+      return updateFiles; // 여기서 업데이트된 파일 목록을 반환
+    });
+    console.log("deletedId:", deletedId);
+  };
   return (
     <>
       {/* <!-- Begin Page Content --> */}
@@ -148,6 +169,7 @@ const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
                       multiple
                       onChange={handleFilesChange}
                     />
+                    {/* 새로 추가된 파일 목록 출력 : data.files */}
                     {data.files && (
                       <div id="file-list">
                         {data.files.map((fileObj) => (
@@ -161,7 +183,32 @@ const BoardForm = ({ initDetail = {}, fileList = [], onSubmit }) => {
                               <button
                                 type="button"
                                 className="delete-button"
-                                onClick={() => handleDeleteFile(fileObj.id)}
+                                onClick={() => handleDeleteNewFile(fileObj.id)}
+                              >
+                                x
+                              </button>
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* 기존의 파일 목록 추가  */}
+                    {files && (
+                      <div id="file-list">
+                        {files.map((file) => (
+                          <div
+                            key={file.uploadFileId}
+                            id="fileName"
+                            className="fileName"
+                          >
+                            <span className="file-item">
+                              {file.orgFileName}
+                              <button
+                                type="button"
+                                className="delete-button"
+                                onClick={() =>
+                                  handleDeleteExistFile(file.uploadFileId)
+                                }
                               >
                                 x
                               </button>

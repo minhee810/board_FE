@@ -40,6 +40,8 @@ api.interceptors.response.use(
     }
     if (error.response && error.response.status === 401) {
       alert(error.response.data.msg);
+      console.log("인증되지 않은 사용자의 접근입니다. 로그인을 진행해주세요.");
+      sessionStorage.removeItem("userData");
     }
     return Promise.reject(error);
   }

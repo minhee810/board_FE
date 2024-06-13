@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import BoardForm from "./BoardForm";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "../../utils/api";
 
 const BoardWrite = () => {
   const navigator = useNavigate();
@@ -27,13 +28,12 @@ const BoardWrite = () => {
 
     if (window.confirm("게시글을 저장하시겠습니까? ")) {
       try {
-        const response = await axios.post(`/api/write`, formData, {
+        const response = await api.post(`/api/write`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
         console.log("response : ", response);
-        alert("게시글을 저장했습니다.");
         navigator("/");
       } catch (error) {
         console.log(error);
@@ -44,11 +44,7 @@ const BoardWrite = () => {
   return (
     <div>
       BoardSave
-      <BoardForm
-        // initDetail={initDetail}
-        // fileList={files}
-        onSubmit={handleSubmit}
-      />
+      <BoardForm initDetail={[]} fileList={[]} onSubmit={handleSubmit} />
     </div>
   );
 };
