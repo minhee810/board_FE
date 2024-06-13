@@ -11,7 +11,6 @@ import BoardWrite from "./pages/board/BoardWrite";
 import { UserContextProvider } from "./context/UserObjContext";
 import PrivateRoute from "./components/PrivateRoute";
 import { BoardModify } from "./pages/board/BoardModify";
-import { BoardSave } from "./pages/board/BoardSave";
 
 function App() {
   return (
@@ -28,7 +27,7 @@ function App() {
               {/*로그인한 사용자만 접근 가능하도록 처리*/}
               <Route element={<PrivateRoute />}>
                 <Route path="/write" element={<BoardWrite />} />
-                <Route path="/save" element={<BoardSave />} />
+                {/* <Route path="/save" element={<BoardSave />} /> */}
 
                 <Route path="/modify/:boardId" element={<BoardModify />} />
               </Route>

@@ -27,15 +27,7 @@ export const BoardModify = () => {
 
   const handleSubmit = async (data) => {
     let formData = new FormData();
-    console.log("data : ", data);
-    console.log("files 가 없을 경우 : ", data.files);
-    console.log("data.fileIdList :", data.fileIdList);
 
-    // if (data.files && data.files.length > 0) {
-    //   data.files.forEach((file) => {
-    //     formData.append("files", file);
-    //   });
-    // }
     if (data.files && data.files.length > 0) {
       for (let i = 0; i < data.files.length; i++) {
         console.log(data.files);
