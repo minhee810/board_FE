@@ -11,6 +11,7 @@ const BoardWrite = () => {
   const [data, setData] = useState({
     title: "",
     content: "",
+    files: [], // 추가
   });
 
   const handelInputChange = (e) => {
@@ -65,6 +66,8 @@ const BoardWrite = () => {
       file,
     }));
     console.log("newFileArray", newFilesArray);
+
+    // 사용자가 파일을 추가할 경우 바로 상태값에 파일 정보를 추가해준다.
     setData({
       ...data,
       [e.target.name]: newFilesArray,
