@@ -26,16 +26,18 @@ const BoardWrite = () => {
     let formData = new FormData();
     console.log("data :", data);
 
-    for (let i = 0; i < data.files.length; i++) {
-      console.log(data.files);
-      formData.append("files", data.files[i].file);
-    }
-    // if (data.files && data.files.length > 0) {
-    //   data.files.forEach((file) => {
-    //     console.log("file", file);
-    //     formData.append("files", file);
-    //   });
+    // for (let i = 0; i < data.files.length; i++) {
+    //   console.log(data.files);
+    //   formData.append("files", data.files[i].file);
     // }
+
+    if (data.files && data.files.length > 0) {
+      data.files.forEach((file) => {
+        console.log("file", file);
+        formData.append("files", file);
+      });
+    }
+
     formData.append("title", data.title);
     formData.append("content", data.content);
 
