@@ -16,6 +16,7 @@ const BoardWrite = () => {
 
   const handelInputChange = (e) => {
     console.log("handelInputChange() 호출");
+    console.log(data);
     setData({
       ...data,
       [e.target.name]: e.target.value,
@@ -27,16 +28,11 @@ const BoardWrite = () => {
     let formData = new FormData();
     console.log("data :", data);
 
-    // for (let i = 0; i < data.files.length; i++) {
-    //   console.log(data.files);
-    //   formData.append("files", data.files[i].file);
-    // }
-
     if (data.files && data.files.length > 0) {
-      data.files.forEach((file) => {
-        console.log("file", file);
-        formData.append("files", file);
-      });
+      for (let i = 0; i < data.files.length; i++) {
+        console.log(data.files);
+        formData.append("files", data.files[i].file);
+      }
     }
 
     formData.append("title", data.title);
@@ -79,18 +75,42 @@ const BoardWrite = () => {
   };
 
   // 삭제할 파일의 uuid를 파라미터로 받아온다.
+  // const handleRemoveFile = (deletedId) => {
+  //   // 원래의 파일 데이터 목록에서 파라미터로 받아온 파일의 아이디와 일치하지 않는 것을 삭제해얗ㅁ.
+  //   console.log("file들 :", data.files);
+  //   console.log(deletedId);
+
+  //   const updateFile = data.files.filter((fileObj) => fileObj.id !== deletedId);
+  //   console.log("updateFile: ", updateFile);
+
+  //   // setData((prevEmpFiles) => {
+  //   //   const updateFiles = prevEmpFiles.filter(
+  //   //     (fileObj) => fileObj.id !== deletedId
+  //   //   );
+  //   //   console.log("updateFiles : ", updateFiles);
+  //   //   return updateFiles;
+  //   // });
+  //   setData(updateFile);
+  //   console.log("deletedId : ", deletedId);
+  // };
+
   const handleRemoveFile = (deletedId) => {
-    // 원래의 파일 데이터 목록에서 파라미터로 받아온 파일의 아이디와 일치하지 않는 것을 삭제해얗ㅁ.
-    console.log("file들 :", data.files);
+    console.log("파일들:", data.files);
 
     setData((prevEmpFiles) => {
-      const updateFiles = prevEmpFiles.filter(
+      // data.files가 배열인지 확인
+      const filesArray = Array.isArray(prevEmpFiles.files)
+        ? prevEmpFiles.files
+        : [];
+
+      const updateFiles = filesArray.filter(
         (fileObj) => fileObj.id !== deletedId
       );
-      console.log("updateFiles : ", updateFiles);
-      return updateFiles;
+      console.log("updateFiles:", updateFiles);
+      return { ...prevEmpFiles, files: updateFiles };
     });
-    console.log("deletedId : ", deletedId);
+
+    console.log("deletedId:", deletedId);
   };
 
   return (
