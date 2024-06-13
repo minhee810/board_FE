@@ -28,8 +28,8 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
       ...data,
       [e.target.name]: e.target.value,
     });
-    console.log(empFiles);
-    console.log(fileIdList);
+    console.log("empFiles : ", empFiles);
+    // console.log(fileIdList);
   };
 
   // 파일값 변경 체크
@@ -46,7 +46,7 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
       [e.target.name]: newFilesArray,
     });
 
-    setEmpFiles((prevEmpFiles) => [...prevEmpFiles, ...newFilesArray]); // 화면에 보여주기 위해 기존의 파일 배열에 추가 // 화면에 보여주기 위해 기존의 파일 배열에 추가
+    // setEmpFiles((prevEmpFiles) => [...prevEmpFiles, ...newFilesArray]); // 화면에 보여주기 위해 기존의 파일 배열에 추가 // 화면에 보여주기 위해 기존의 파일 배열에 추가
   }; /// ...  하는 이유 배열에 배열을 추가하는 것이기 땨문에 중첩을 피하기 위해 다음과 같이 표기
 
   // 파일이 추가되면 파일을 뿌려주는 부분이 재랜더링 되어야 한다.
@@ -58,26 +58,43 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
     onSubmit({ ...data, fileIdList });
   };
 
-  const handleDeleteFile = (uploadFileId) => {
-    // 삭제할 파일의 아이디
-    console.log(uploadFileId);
-    // 파일 아이디 리스트에서 기존의 리스트 + 파라미터로 넘어온 파일 아이디 저장
-    // 비동기 적으로 가져오는 문제를 해결하기 위해 아이디를 가져와 리스트를 변경해주는 부분을 다음과 같이 처리
-    setFileIdList((prevFileList) => {
-      const updateFileList = [...prevFileList, uploadFileId];
-      console.log("updateFileLsit : ", updateFileList);
-      return updateFileList;
-    });
+  // const handleDeleteFile = (uploadFileId) => {
+  //   // 삭제할 파일의 아이디
+  //   console.log(uploadFileId);
+  //   // 파일 아이디 리스트에서 기존의 리스트 + 파라미터로 넘어온 파일 아이디 저장
+  //   // 비동기 적으로 가져오는 문제를 해결하기 위해 아이디를 가져와 리스트를 변경해주는 부분을 다음과 같이 처리
+  //   setFileIdList((prevFileList) => {
+  //     const updateFileList = [...prevFileList, uploadFileId];
+  //     console.log("updateFileLsit : ", updateFileList);
+  //     return updateFileList;
+  //   });
 
-    const newFileList = empFiles.filter(
-      // 사용자가 선택한 파일 아이디만 제외하고 파일 객체를 다시 저장
-      (file) => file.uploadFileId !== uploadFileId
-    );
-    console.log("newFileList : ", newFileList);
-    // // 임시 파일 리스트의 값만 변경해준다. 새로 파일 배열에 넣으면 서버로 날아가기 때문 임시 파일 리스트 생성
-    setEmpFiles(newFileList);
-    // 삭제할 파일의 아이디를 배열에 저장해서 서버로 보내고,
-    // 화면에서도 파일이 보이지 않게 처리해야함.
+  //   const newFileList = empFiles.filter(
+  //     // 사용자가 선택한 파일 아이디만 제외하고 파일 객체를 다시 저장
+  //     (file) => file.uploadFileId !== uploadFileId
+  //   );
+  //   console.log("newFileList : ", newFileList);
+  //   // // 임시 파일 리스트의 값만 변경해준다. 새로 파일 배열에 넣으면 서버로 날아가기 때문 임시 파일 리스트 생성
+  //   setEmpFiles(newFileList);
+  //   // 삭제할 파일의 아이디를 배열에 저장해서 서버로 보내고,
+  //   // 화면에서도 파일이 보이지 않게 처리해야함.
+  // };
+  const handleDeleteFile = (deletedId) => {
+    console.log("파일들:", data.files);
+
+    setData((prevEmpFiles) => {
+      // data.files가 배열인지 확인
+      const filesArray = Array.isArray(prevEmpFiles.files)
+        ? prevEmpFiles.files
+        : [];
+
+      const updateFiles = filesArray.filter(
+        (fileObj) => fileObj.id !== deletedId
+      );
+      console.log("updateFiles:", updateFiles);
+      return { ...prevEmpFiles, files: updateFiles };
+    });
+    console.log("deletedId:", deletedId);
   };
 
   return (
@@ -131,28 +148,28 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
                       multiple
                       onChange={handleFilesChange}
                     />
-                    <div id="file-list">
-                      {empFiles.map((file) => (
-                        <div
-                          key={file.uploadFileId}
-                          id="fileName"
-                          className="fileName"
-                        >
-                          <span className="file-item">
-                            {file.orgFileName}
-                            <button
-                              type="button"
-                              className="delete-button"
-                              onClick={() =>
-                                handleDeleteFile(file.uploadFileId)
-                              }
-                            >
-                              x
-                            </button>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                    {data.files && (
+                      <div id="file-list">
+                        {data.files.map((fileObj) => (
+                          <div
+                            key={fileObj.id}
+                            id="fileName"
+                            className="fileName"
+                          >
+                            <span className="file-item">
+                              {fileObj.file.name}
+                              <button
+                                type="button"
+                                className="delete-button"
+                                onClick={() => handleDeleteFile(fileObj.id)}
+                              >
+                                x
+                              </button>
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

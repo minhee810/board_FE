@@ -31,10 +31,16 @@ export const BoardModify = () => {
     console.log("files 가 없을 경우 : ", data.files);
     console.log("data.fileIdList :", data.fileIdList);
 
+    // if (data.files && data.files.length > 0) {
+    //   data.files.forEach((file) => {
+    //     formData.append("files", file);
+    //   });
+    // }
     if (data.files && data.files.length > 0) {
-      data.files.forEach((file) => {
-        formData.append("files", file);
-      });
+      for (let i = 0; i < data.files.length; i++) {
+        console.log(data.files);
+        formData.append("files", data.files[i].file);
+      }
     }
     // deletedFilesId 배열을 개별적으로 추가
     if (data.fileIdList && data.fileIdList.length > 0) {
