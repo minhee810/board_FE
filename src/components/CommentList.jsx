@@ -8,8 +8,15 @@ import CommentWrite from "./CommentWrite";
 
 const CommentList = ({ boardId }) => {
   const [cList, setCList] = useState();
+  const [modifyMode, setModifyMode] = useState(false);
+  const [modifyId, setModifyId] = useState("");
+  const [principal, setPrincipal] = useState();
+
   useEffect(() => {
     getList(boardId);
+
+    // modifyMode();
+    // modifyId(modifyId);
   }, [boardId]);
 
   async function getList(boardId) {
@@ -18,11 +25,41 @@ const CommentList = ({ boardId }) => {
   }
 
   const handleCommentDelete = async (commentId) => {
-    const response = await deleteComment(boardId, commentId);
+    if (window.confirm("댓글을 삭제하시겠습니까? ")) {
+      const response = await deleteComment(boardId, commentId);
+      console.log(response);
+    }
   };
 
+  // 댓글 저장
   const handleSubmit = async (data) => {
+    console.log("handleSubmit 호출: ");
+    // setCList((prevCList) => [...prevCList, { ...data, principal: 1 }]);
     setCList([...cList, data]);
+  };
+
+  // 댓글 수정
+  const handleUpdate = (data) => {
+    console.log("cList : ", cList);
+    console.log("data : ", data);
+    if (modifyMode === true) {
+      setModifyMode(!modifyMode);
+    }
+    setCList();
+    // 댓글정보를 가져와서 content 내용으로 넣는다?
+
+    // 댓글 수정 버튼을 클릭하면 부모 컴포넌트로 데이터를 넘긴다.
+    // 넘겨 받은 부모 커모넌트가 기존의 댓글 정보에 새로 응답 받은 데이터를 추가하면?
+    // 밑으로 댓글이 쌓이는 문제점이 발생한다.
+    // 따라서 데이터를 추가해주는 방식이 아닌 데이터를 업데이트 시켜주는? 기능을 만들어야 한다.
+  };
+
+  // 수정할 게시글의 아이디 값을 받아온다.
+  const handleModify = (modifyId) => {
+    console.log(`handleModify(${modifyId}) 호출`);
+    setModifyId(modifyId);
+    setModifyMode(!modifyMode);
+    console.log(modifyId === cList.commentId);
   };
 
   return (
@@ -71,7 +108,7 @@ const CommentList = ({ boardId }) => {
                         <>
                           <div
                             className="commentModify"
-                            onClick={() => console.log("답글 수정 버튼 ")}
+                            onClick={() => handleModify(comment.commentId)}
                           >
                             수정
                           </div>
@@ -94,7 +131,17 @@ const CommentList = ({ boardId }) => {
                     </div>
                   </div>
                   <div className="comment">
-                    <p>{comment.commentContent}</p>
+                    {modifyMode && comment.commentId === modifyId ? (
+                      <CommentWrite
+                        commentValue={comment.commentContent}
+                        boardId={boardId}
+                        commentId={comment.commentId}
+                        onSubmit={handleUpdate}
+                        modifyMode={modifyMode}
+                      />
+                    ) : (
+                      <p>{comment.commentContent}</p>
+                    )}
                   </div>
                 </div>
                 <hr className="sidebar-divider d-none d-md-block" />
@@ -102,7 +149,9 @@ const CommentList = ({ boardId }) => {
             ))}
         </ul>
       </form>
-      <CommentWrite boardId={boardId} onSubmit={handleSubmit} />
+      {!modifyMode && (
+        <CommentWrite boardId={boardId} onSubmit={handleSubmit} />
+      )}
     </div>
   );
 };

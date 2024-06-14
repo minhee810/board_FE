@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const api = axios.create({
   headers: { "Content-Type": "application/json" },
   withCredentials: true, // 다른 도메인에 요청을 보낼 때 요청에 인증 정보를 담아서 보낼 지 결정하는 항목
@@ -42,6 +42,10 @@ api.interceptors.response.use(
       alert(error.response.data.msg);
       console.log("인증되지 않은 사용자의 접근입니다. 로그인을 진행해주세요.");
       sessionStorage.removeItem("userData");
+    }
+
+    if (error.response && error.response.status === 405) {
+      alert("인증되지 않은 사용자의 접근입니다.");
     }
     return Promise.reject(error);
   }

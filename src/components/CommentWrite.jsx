@@ -1,15 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
-import { commentSave, commentWrite } from "../services/comment/CommentService";
+import {
+  commentSave,
+  commentUpdate,
+  commentWrite,
+} from "../services/comment/CommentService";
 
-const CommentWrite = ({ boardId, onSubmit }) => {
+const CommentWrite = ({
+  commentValue,
+  boardId,
+  commentId,
+  onSubmit,
+  modifyMode,
+}) => {
   const navigator = useNavigate();
+  // const [modifyMode, setModifyMode] = useState(false);
   // const [comment, setComment] = useState(""); // 기존의 댓글 내용을 불러오는 함수
   const [data, setData] = useState({
-    commentContent: "",
-    boardId: boardId,
+    commentContent: commentValue,
+    boardId: "",
   });
+
+  useEffect(() => {
+    console.log("data useEffect 호출");
+    setData({
+      commentContent: commentValue,
+    });
+  }, [commentValue]);
 
   const handleChange = (e) => {
     setData({
@@ -18,22 +36,47 @@ const CommentWrite = ({ boardId, onSubmit }) => {
     });
   };
 
+  // const handleSave = async () => {
+  //   try {
+  //     const response = await commentWrite(data);
+  //     console.log("response.data : ", response.data);
+  //     // setComment(response.data);
+  //     onSubmit(response.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   setData({
+  //     commentContent: "",
+  //   });
+  // };
+
   const handleSave = async () => {
     try {
       const response = await commentWrite(data);
+      console.log("response.data : ", response.data);
+      // setComment(response.data);
       onSubmit(response.data);
     } catch (error) {
       console.log(error);
     }
-
     setData({
       commentContent: "",
     });
   };
 
+  const handleUpdate = async () => {
+    try {
+      const response = await commentUpdate(commentId, data.commentContent);
+      console.log(response.data);
+      onSubmit(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
-      <form className="flex" id="commentForm" name="commentForm">
+      <div className="flex" id="commentForm" name="commentForm">
         <input type="hidden" name="boardNo" value="1" />
         <textarea
           id="a3"
@@ -52,12 +95,12 @@ const CommentWrite = ({ boardId, onSubmit }) => {
             type="button"
             className="btn btn-primary btn ml-1"
             style={{ marginTop: "0.75rem", width: "100%" }}
-            onClick={handleSave}
+            onClick={modifyMode ? handleUpdate : handleSave}
           >
             등록
           </button>
         </Link>
-      </form>
+      </div>
     </>
   );
 };

@@ -15,7 +15,7 @@ export const deleteComment = async (boardId, commentId) => {
       boardId: boardId,
       commentId: commentId,
     };
-    const response = await api.get(`/comments/delete`, data);
+    const response = await api.put(`/api/comments/delete`, data);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -23,8 +23,23 @@ export const deleteComment = async (boardId, commentId) => {
 };
 
 export const commentWrite = async (data) => {
+  console.log("commentSave() ", data);
   try {
     const response = await api.post(`/api/comments`, data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const commentUpdate = async (commentId, commentContent) => {
+  console.log(commentId, commentContent);
+  const data = {
+    commentId: commentId,
+    commentContent: commentContent,
+  };
+  try {
+    const response = await api.put(`/api/comments`, data);
     return response.data;
   } catch (error) {
     console.log(error);
