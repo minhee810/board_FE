@@ -24,7 +24,6 @@ const BoardDetail = () => {
 
   useEffect(() => {
     getBoardDetail(boardId);
-    console.log(userData.userId);
   }, [boardId]);
 
   async function getBoardDetail(boardId) {
@@ -42,7 +41,6 @@ const BoardDetail = () => {
 
     if (window.confirm("해당 게시글을 삭제하시겠습니까? ")) {
       const response = await boardDelete(boardId);
-      console.log(response);
     }
     navigator("/");
   };
@@ -119,8 +117,6 @@ const BoardDetail = () => {
 
             <div className="card-footer">
               <CommentList boardId={boardId} />
-
-              <CommentWrite boardId={boardId} />
             </div>
           </div>
         </div>

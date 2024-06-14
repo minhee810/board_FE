@@ -1,10 +1,8 @@
-import React from "react";
 import api from "../../utils/api";
 
 export const getCommentList = async (boardId) => {
   try {
     const response = await api.get(`/comments/${boardId}`);
-    console.log("service : ", response);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -18,7 +16,15 @@ export const deleteComment = async (boardId, commentId) => {
       commentId: commentId,
     };
     const response = await api.get(`/comments/delete`, data);
-    console.log("service : ", response);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const commentWrite = async (data) => {
+  try {
+    const response = await api.post(`/api/comments`, data);
     return response.data;
   } catch (error) {
     console.log(error);

@@ -4,29 +4,27 @@ import {
   getCommentList,
 } from "../services/comment/CommentService";
 import { dateFormat } from "../utils/utility";
+import CommentWrite from "./CommentWrite";
 
 const CommentList = ({ boardId }) => {
   const [cList, setCList] = useState();
-  // const [data, setData] = useState({
-  //   commentId: "",
-  //   boardId: boardId,
-  // });
   useEffect(() => {
     getList(boardId);
-    console.log(boardId);
   }, [boardId]);
 
   async function getList(boardId) {
     const response = await getCommentList(boardId);
     setCList(response.data);
-    console.log("response.data : ", response.data);
   }
 
   const handleCommentDelete = async (commentId) => {
-    console.log("commentId : ", commentId);
     const response = await deleteComment(boardId, commentId);
-    console.log(response);
   };
+
+  const handleSubmit = async (data) => {
+    setCList([...cList, data]);
+  };
+
   return (
     <div>
       <form id="replyForm" name="replyForm">
@@ -69,20 +67,24 @@ const CommentList = ({ boardId }) => {
                       >
                         답글
                       </div>
-
-                      <div
-                        className="commentModify"
-                        onClick={() => console.log("답글 수정 버튼 ")}
-                      >
-                        수정
-                      </div>
-                      <div
-                        className="commentRemove"
-                        onClick={() => handleCommentDelete(comment.commentId)}
-                      >
-                        삭제
-                      </div>
-
+                      {comment.principal === 1 && (
+                        <>
+                          <div
+                            className="commentModify"
+                            onClick={() => console.log("답글 수정 버튼 ")}
+                          >
+                            수정
+                          </div>
+                          <div
+                            className="commentRemove"
+                            onClick={() =>
+                              handleCommentDelete(comment.commentId)
+                            }
+                          >
+                            삭제
+                          </div>
+                        </>
+                      )}
                       <div
                         className="commentCancle"
                         style={{ display: "none" }}
@@ -100,6 +102,7 @@ const CommentList = ({ boardId }) => {
             ))}
         </ul>
       </form>
+      <CommentWrite boardId={boardId} onSubmit={handleSubmit} />
     </div>
   );
 };

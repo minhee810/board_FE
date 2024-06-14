@@ -43,7 +43,6 @@ export async function boardUpdate(boardId, formData) {
   console.log(boardId, formData);
   try {
     const response = await axios.post(`/api/modify/${boardId}`, formData);
-    console.log("service response : ", response);
     return response;
   } catch (error) {
     console.log("service error : ", error);
@@ -55,7 +54,6 @@ export async function boardDelete(boardId) {
 
   try {
     const response = await api.post(`/api/delete/${boardId}`);
-    console.log("service resonse : ", response);
     return response;
   } catch (error) {
     console.log("service error : ", error);

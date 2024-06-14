@@ -22,12 +22,11 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
 
   // 입력값 변경 체크
   const handelInputChange = (e) => {
-    console.log("handelInputChange() 호출");
     setData({
       ...data,
       [e.target.name]: e.target.value,
     });
-    console.log("files : ", files);
+    // console.log("files : ", files);
     // console.log(fileIdList);
   };
 

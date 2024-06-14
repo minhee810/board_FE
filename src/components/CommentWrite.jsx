@@ -1,7 +1,36 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { commentSave, commentWrite } from "../services/comment/CommentService";
 
-const CommentWrite = ({ boardId }) => {
+const CommentWrite = ({ boardId, onSubmit }) => {
+  const navigator = useNavigate();
+  // const [comment, setComment] = useState(""); // 기존의 댓글 내용을 불러오는 함수
+  const [data, setData] = useState({
+    commentContent: "",
+    boardId: boardId,
+  });
+
+  const handleChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await commentWrite(data);
+      onSubmit(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setData({
+      commentContent: "",
+    });
+  };
+
   return (
     <>
       <form className="flex" id="commentForm" name="commentForm">
@@ -15,12 +44,15 @@ const CommentWrite = ({ boardId }) => {
           style={{ width: "90%" }}
           placeholder="내용
        "
+          onChange={handleChange}
+          value={data.commentContent}
         ></textarea>
-        <Link to="#" className="commentAdd flex" style={{ width: "9%" }}>
+        <Link className="commentAdd flex" style={{ width: "9%" }}>
           <button
             type="button"
             className="btn btn-primary btn ml-1"
             style={{ marginTop: "0.75rem", width: "100%" }}
+            onClick={handleSave}
           >
             등록
           </button>
