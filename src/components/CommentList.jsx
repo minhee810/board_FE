@@ -14,7 +14,7 @@ const CommentList = ({ boardId }) => {
 
   useEffect(() => {
     getList(boardId);
-
+    console.log("boardId : ", boardId);
     // modifyMode();
     // modifyId(modifyId);
   }, [boardId]);

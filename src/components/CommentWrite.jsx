@@ -18,16 +18,18 @@ const CommentWrite = ({
   // const [modifyMode, setModifyMode] = useState(false);
   // const [comment, setComment] = useState(""); // 기존의 댓글 내용을 불러오는 함수
   const [data, setData] = useState({
+    boardId: boardId,
     commentContent: commentValue,
-    boardId: "",
   });
 
   useEffect(() => {
+    console.log(boardId);
     console.log("data useEffect 호출");
     setData({
+      boardId: boardId,
       commentContent: commentValue,
     });
-  }, [commentValue]);
+  }, [boardId, commentValue]);
 
   const handleChange = (e) => {
     setData({
