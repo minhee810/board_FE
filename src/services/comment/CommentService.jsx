@@ -32,11 +32,12 @@ export const commentWrite = async (data) => {
   }
 };
 
-export const commentUpdate = async (commentId, commentContent) => {
-  console.log(commentId, commentContent);
+export const commentUpdate = async (commentId, comment) => {
+  console.log(commentId, comment);
   const data = {
+    boardId: comment.boardId,
     commentId: commentId,
-    commentContent: commentContent,
+    commentContent: comment.commentContent,
   };
   try {
     const response = await api.put(`/api/comments`, data);

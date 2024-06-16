@@ -55,9 +55,9 @@ const CommentWrite = ({
   const handleSave = async () => {
     try {
       const response = await commentWrite(data);
-      console.log("response.data : ", response.data);
-      // setComment(response.data);
+      // 부모 컴포넌트로 데이터 전송
       onSubmit(response.data);
+      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -68,7 +68,7 @@ const CommentWrite = ({
 
   const handleUpdate = async () => {
     try {
-      const response = await commentUpdate(commentId, data.commentContent);
+      const response = await commentUpdate(commentId, data);
       console.log(response.data);
       onSubmit(response.data);
     } catch (error) {

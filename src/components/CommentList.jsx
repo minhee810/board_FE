@@ -10,15 +10,16 @@ const CommentList = ({ boardId }) => {
   const [cList, setCList] = useState();
   const [modifyMode, setModifyMode] = useState(false);
   const [modifyId, setModifyId] = useState("");
-  const [principal, setPrincipal] = useState();
 
   useEffect(() => {
     getList(boardId);
-    console.log("boardId : ", boardId);
-    // modifyMode();
-    // modifyId(modifyId);
   }, [boardId]);
 
+  // useEffect(() => {
+  //   getList(boardId);
+  // }, []);
+
+  useEffect(() => {}, []);
   async function getList(boardId) {
     const response = await getCommentList(boardId);
     setCList(response.data);
@@ -39,13 +40,23 @@ const CommentList = ({ boardId }) => {
   };
 
   // 댓글 수정
-  const handleUpdate = (data) => {
+  const handleUpdate = (updatedComment) => {
     console.log("cList : ", cList);
-    console.log("data : ", data);
+    console.log("updatedComment : ", updatedComment);
     if (modifyMode === true) {
       setModifyMode(!modifyMode);
     }
-    setCList();
+    setCList((prevComments) =>
+    // 댓글 리스트에 새로 추가된 댓글의 내용을 추가할 경우 
+    // 기존의 댓글 배열에서 내가 수정한 댓글 아이디와 같은 댓글의 아이디를 비교해서 동일하다면 댓글의 내용을 수정한 내용으로 변경하고, 
+    // 아니면 기존의 댓글 내용 유지
+      prevComments.map((comment) =>
+        comment.id === updatedComment.id ? updatedComment : comment
+      )
+    );
+
+    // 해당 댓글의 아이디를 가져와서 그 내용으로 변경하기!
+
     // 댓글정보를 가져와서 content 내용으로 넣는다?
 
     // 댓글 수정 버튼을 클릭하면 부모 컴포넌트로 데이터를 넘긴다.
@@ -134,8 +145,9 @@ const CommentList = ({ boardId }) => {
                     {modifyMode && comment.commentId === modifyId ? (
                       <CommentWrite
                         commentValue={comment.commentContent}
-                        boardId={boardId}
                         commentId={comment.commentId}
+                        comment={comment}
+                        boardId={boardId}
                         onSubmit={handleUpdate}
                         modifyMode={modifyMode}
                       />
