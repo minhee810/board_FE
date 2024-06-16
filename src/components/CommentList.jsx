@@ -5,11 +5,15 @@ import {
 } from "../services/comment/CommentService";
 import { dateFormat } from "../utils/utility";
 import CommentWrite from "./CommentWrite";
+import ReplyWrite from "./ReplyWrite";
 
 const CommentList = ({ boardId }) => {
   const [cList, setCList] = useState([]);
   const [modifyMode, setModifyMode] = useState(false);
   const [modifyId, setModifyId] = useState("");
+  const [replyMode, setReplyMode] = useState(false);
+  const [btnMode, setBtnMode] = useState("");
+  const [replyId, setReplyId] = useState("");
 
   useEffect(() => {
     getList(boardId);
@@ -32,6 +36,9 @@ const CommentList = ({ boardId }) => {
   // 댓글 저장
   const handleSubmit = async (data) => {
     console.log("handleSubmit 호출: ");
+    if (replyMode) {
+      console.log("대댓글 모드 : 대댓글 작성 api 호출");
+    }
     setCList((preveCList) => [...cList, data]);
   };
 
@@ -42,13 +49,24 @@ const CommentList = ({ boardId }) => {
     if (modifyMode === true) {
       setModifyMode(!modifyMode);
     }
+    // setCList((prevComments) =>
+    //   // 댓글 리스트에 새로 추가된 댓글의 내용을 추가할 경우
+    //   // 기존의 댓글 배열에서 내가 수정한 댓글 아이디와 같은 댓글의 아이디를 비교해서 동일하다면 댓글의 내용을 수정한 내용으로 변경하고,
+    //   // 아니면 기존의 댓글 내용 유지
+    //   prevComments.map((comment) =>
+    //     comment.id === updatedComment.id ? updatedComment : comment
+    //   )
+    // );
     setCList((prevComments) =>
-      // 댓글 리스트에 새로 추가된 댓글의 내용을 추가할 경우
-      // 기존의 댓글 배열에서 내가 수정한 댓글 아이디와 같은 댓글의 아이디를 비교해서 동일하다면 댓글의 내용을 수정한 내용으로 변경하고,
-      // 아니면 기존의 댓글 내용 유지
-      prevComments.map((comment) =>
-        comment.id === updatedComment.id ? updatedComment : comment
+      prevComments.some(
+        (comment) => comment.commentId === updatedComment.commentId
       )
+        ? prevComments.map((comment) =>
+            comment.commentId === updatedComment.commentId
+              ? updatedComment
+              : comment
+          )
+        : [...prevComments, updatedComment]
     );
   };
 
@@ -58,6 +76,12 @@ const CommentList = ({ boardId }) => {
     setModifyId(modifyId);
     setModifyMode(!modifyMode);
     console.log(modifyId === cList.commentId);
+  };
+
+  const handleReplySubmit = (commentId) => {
+    console.log("대댓글 작성 버튼 클릭");
+    setReplyMode(!replyMode);
+    console.log(replyMode);
   };
 
   return (
@@ -98,7 +122,7 @@ const CommentList = ({ boardId }) => {
                     <div className="commentHead2">
                       <div
                         className="commentReply"
-                        onClick={() => console.log("답글 작성 버튼 ")}
+                        onClick={() => handleReplySubmit(comment.commentId)}
                       >
                         답글
                       </div>
@@ -144,6 +168,13 @@ const CommentList = ({ boardId }) => {
                   </div>
                 </div>
                 <hr className="sidebar-divider d-none d-md-block" />
+                {replyMode && comment.commentId === replyId && (
+                  <ReplyWrite
+                    parentCommentId={comment.commentId}
+                    boardId={boardId}
+                    onSubmit={handleSubmit}
+                  />
+                )}
               </li>
             ))}
         </ul>

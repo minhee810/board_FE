@@ -46,6 +46,7 @@ api.interceptors.response.use(
 
     if (error.response && error.response.status === 405) {
       alert("인증되지 않은 사용자의 접근입니다.");
+      sessionStorage.removeItem("userData");
     }
     return Promise.reject(error);
   }

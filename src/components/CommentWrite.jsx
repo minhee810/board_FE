@@ -14,9 +14,6 @@ const CommentWrite = ({
   onSubmit,
   modifyMode,
 }) => {
-  const navigator = useNavigate();
-  // const [modifyMode, setModifyMode] = useState(false);
-  // const [comment, setComment] = useState(""); // 기존의 댓글 내용을 불러오는 함수
   const [data, setData] = useState({
     boardId: boardId,
     commentContent: commentValue,
@@ -37,20 +34,6 @@ const CommentWrite = ({
       [e.target.name]: e.target.value,
     });
   };
-
-  // const handleSave = async () => {
-  //   try {
-  //     const response = await commentWrite(data);
-  //     console.log("response.data : ", response.data);
-  //     // setComment(response.data);
-  //     onSubmit(response.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  //   setData({
-  //     commentContent: "",
-  //   });
-  // };
 
   const handleSave = async () => {
     try {
