@@ -27,14 +27,13 @@ const CommentList = ({ boardId }) => {
     if (window.confirm("댓글을 삭제하시겠습니까? ")) {
       const response = await deleteComment(boardId, commentId);
       console.log("response : ", response);
-      // comment.commentId 가 파라미터와 일치하지 않는 원소만 추출해서 새로운 배열을 생성
-      setCList(cList.filter((comment) => comment.commentId !== commentId));
-      // setCList(
-      //   cList.some((comment) => comment.commentId !== commentId)
-      //     ? "삭제된 댓글입니다. "
-
-      //     : ""
-      // );
+      setCList((prev) =>
+        prev.map((comment) =>
+          comment.commentId === commentId
+            ? { ...comment, isDeleted: "1" }
+            : comment
+        )
+      );
     }
   };
 
@@ -118,74 +117,74 @@ const CommentList = ({ boardId }) => {
                   className="commentDiv"
                   style={{ paddingLeft: `${comment.depth}rem` }}
                 >
-                  {/* {comment.isDeleted === "1" ? (
+                  {comment.isDeleted === "1" ? (
                     <>
                       <span> 삭제된 댓글입니다. </span>
                     </>
                   ) : (
-                    <> */}
-                  <div className="commentHead">
-                    <div className="commentHead1">
-                      <div className="commentName">{comment.username}</div>
-                      <div className="commentDate">
-                        {dateFormat(comment.createdDate)}
-                      </div>
-                    </div>
+                    <>
+                      <div className="commentHead">
+                        <div className="commentHead1">
+                          <div className="commentName">{comment.username}</div>
+                          <div className="commentDate">
+                            {dateFormat(comment.createdDate)}
+                          </div>
+                        </div>
 
-                    <div className="commentHead2">
-                      <div
-                        className="commentReply"
-                        onClick={() => handleReplyView(comment.commentId)}
-                      >
-                        답글
-                      </div>
-                      {comment.principal === 1 && (
-                        <>
+                        <div className="commentHead2">
                           <div
-                            className="commentModify"
-                            onClick={() => handleModify(comment.commentId)}
+                            className="commentReply"
+                            onClick={() => handleReplyView(comment.commentId)}
                           >
-                            수정
+                            답글
                           </div>
+                          {comment.principal === 1 && (
+                            <>
+                              <div
+                                className="commentModify"
+                                onClick={() => handleModify(comment.commentId)}
+                              >
+                                수정
+                              </div>
+                              <div
+                                className="commentRemove"
+                                onClick={() =>
+                                  handleCommentDelete(comment.commentId)
+                                }
+                              >
+                                삭제
+                              </div>
+                            </>
+                          )}
                           <div
-                            className="commentRemove"
-                            onClick={() =>
-                              handleCommentDelete(comment.commentId)
-                            }
+                            className="commentCancle"
+                            style={{ display: "none" }}
                           >
-                            삭제
+                            취소
                           </div>
-                        </>
-                      )}
-                      <div
-                        className="commentCancle"
-                        style={{ display: "none" }}
-                      >
-                        취소
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="comment">
-                    {modifyMode && comment.commentId === modifyId ? (
-                      <CommentWrite
-                        commentValue={comment.commentContent}
-                        commentId={comment.commentId}
-                        comment={comment}
-                        boardId={boardId}
-                        onSubmit={handleUpdate}
-                        modifyMode={modifyMode}
-                      />
-                    ) : (
-                      <p>
-                        {comment.parentUsername && (
-                          <>@{comment.parentUsername}</>
+                      <div className="comment">
+                        {modifyMode && comment.commentId === modifyId ? (
+                          <CommentWrite
+                            commentValue={comment.commentContent}
+                            commentId={comment.commentId}
+                            comment={comment}
+                            boardId={boardId}
+                            onSubmit={handleUpdate}
+                            modifyMode={modifyMode}
+                          />
+                        ) : (
+                          <p>
+                            {comment.parentUsername && (
+                              <>@{comment.parentUsername}</>
+                            )}
+                            {comment.commentContent}
+                          </p>
                         )}
-                        {comment.commentContent}
-                      </p>
-                    )}
-                  </div>
-                  {/* </> */}
-                  {/* )} */}
+                      </div>
+                    </>
+                  )}
                 </div>
                 <hr className="sidebar-divider d-none d-md-block" />
                 {replyMode && comment.commentId === replyId && (
