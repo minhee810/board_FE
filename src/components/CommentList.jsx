@@ -165,23 +165,23 @@ const CommentList = ({ boardId }) => {
                         </div>
                       </div>
                       <div className="comment">
-                        {modifyMode && comment.commentId === modifyId ? (
-                          <CommentWrite
-                            commentValue={comment.commentContent}
-                            commentId={comment.commentId}
-                            comment={comment}
-                            boardId={boardId}
-                            onSubmit={handleUpdate}
-                            modifyMode={modifyMode}
-                          />
-                        ) : (
-                          <p>
-                            {comment.parentUsername && (
-                              <>@{comment.parentUsername}</>
-                            )}
-                            {comment.commentContent}
-                          </p>
-                        )}
+                        <div>
+                          {comment.parentUsername && (
+                            <>@{comment.parentUsername}</>
+                          )}
+                          {modifyMode && comment.commentId === modifyId ? (
+                            <CommentWrite
+                              commentValue={comment.commentContent}
+                              commentId={comment.commentId}
+                              comment={comment}
+                              boardId={boardId}
+                              onSubmit={handleUpdate}
+                              modifyMode={modifyMode}
+                            />
+                          ) : (
+                            <span>{comment.commentContent}</span>
+                          )}
+                        </div>
                       </div>
                     </>
                   )}
