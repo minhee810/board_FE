@@ -7,7 +7,7 @@ import axios from "axios";
 
 export const BoardModify = () => {
   const navigator = useNavigate();
-  const [initDetail, setInitDetail] = useState({});
+  const [initDetail, setInitDetail] = useState();
   const [files, setFiles] = useState([]);
   const { boardId } = useParams(); // 동적 라우팅, 클릭한 컴포넌트의 id값 받아옴
 
@@ -61,7 +61,6 @@ export const BoardModify = () => {
 
   return (
     <div>
-      BoardMofify
       <BoardForm
         initDetail={initDetail}
         fileList={files}

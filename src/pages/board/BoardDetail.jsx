@@ -17,6 +17,22 @@ const BoardDetail = () => {
   const [files, setFiles] = useState([]);
   const { userData, setUserData } = useContext(UserObjContext);
 
+  const [isAuthor, setIsAuthor] = useState(false); // 글 작성자와 로그인 사용자의 정보가 일치하는지
+
+  // useEffect(() => {
+  //   const fetchPost = async () => {
+  //     const response = await fetch(`/api/posts/${postId}`);
+  //     const postData = await response.json();
+  //     setPost(postData);
+
+  //     if (user && user.username === postData.author) {
+  //       setIsAuthor(true);
+  //     }
+  //   };
+
+  //   fetchPost();
+  // }, [postId, user]);
+
   const handleFileDownload = (boardId, orgFileName, saveFileName) => {
     console.log("handleFileDownload 호출");
     downloadFile(boardId, orgFileName, saveFileName);
@@ -86,7 +102,7 @@ const BoardDetail = () => {
 
               {files.map((file) => (
                 <div key={file.uploadFileId} id="fileName" className="fileName">
-                  {userData.userId ? (
+                  {userData.isLogin ? (
                     <Link
                       onClick={() =>
                         handleFileDownload(

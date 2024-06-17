@@ -4,6 +4,7 @@ export const UserObjContext = createContext();
 
 const initData = {
   userId: null,
+  isLogin: false,
   username: "Guest",
 };
 /**

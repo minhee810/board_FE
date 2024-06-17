@@ -43,7 +43,6 @@ const BoardWrite = () => {
 
   return (
     <div>
-      BoardSave
       <BoardForm initDetail={[]} fileList={[]} onSubmit={handleSubmit} />
     </div>
   );

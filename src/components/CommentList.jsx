@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   deleteComment,
   getCommentList,
 } from "../services/comment/CommentService";
-import { dateFormat } from "../utils/utility";
+import { getFormattedDate } from "../utils/utility";
 import CommentWrite from "./CommentWrite";
 import ReplyWrite from "./ReplyWrite";
+import { UserObjContext } from "../context/UserObjContext";
 
 const CommentList = ({ boardId }) => {
   const [cList, setCList] = useState([]);
@@ -13,6 +14,7 @@ const CommentList = ({ boardId }) => {
   const [modifyId, setModifyId] = useState("");
   const [replyId, setReplyId] = useState("");
   const [replyMode, setReplyMode] = useState(false);
+  const { userData, setUserData } = useContext(UserObjContext);
 
   useEffect(() => {
     getList(boardId);
@@ -127,47 +129,50 @@ const CommentList = ({ boardId }) => {
                         <div className="commentHead1">
                           <div className="commentName">{comment.username}</div>
                           <div className="commentDate">
-                            {dateFormat(comment.createdDate)}
+                            {getFormattedDate(comment.createdDate)}
                           </div>
                         </div>
-
-                        <div className="commentHead2">
-                          <div
-                            className="commentReply"
-                            onClick={() => handleReplyView(comment.commentId)}
-                          >
-                            답글
+                        {userData.isLogin && (
+                          <div className="commentHead2">
+                            <div
+                              className="commentReply"
+                              onClick={() => handleReplyView(comment.commentId)}
+                            >
+                              답글
+                            </div>
+                            {comment.principal === 1 && (
+                              <>
+                                <div
+                                  className="commentModify"
+                                  onClick={() =>
+                                    handleModify(comment.commentId)
+                                  }
+                                >
+                                  수정
+                                </div>
+                                <div
+                                  className="commentRemove"
+                                  onClick={() =>
+                                    handleCommentDelete(comment.commentId)
+                                  }
+                                >
+                                  삭제
+                                </div>
+                              </>
+                            )}
+                            <div
+                              className="commentCancle"
+                              style={{ display: "none" }}
+                            >
+                              취소
+                            </div>
                           </div>
-                          {comment.principal === 1 && (
-                            <>
-                              <div
-                                className="commentModify"
-                                onClick={() => handleModify(comment.commentId)}
-                              >
-                                수정
-                              </div>
-                              <div
-                                className="commentRemove"
-                                onClick={() =>
-                                  handleCommentDelete(comment.commentId)
-                                }
-                              >
-                                삭제
-                              </div>
-                            </>
-                          )}
-                          <div
-                            className="commentCancle"
-                            style={{ display: "none" }}
-                          >
-                            취소
-                          </div>
-                        </div>
+                        )}
                       </div>
                       <div className="comment">
                         <div>
                           {comment.parentUsername && (
-                            <>@{comment.parentUsername}</>
+                            <>@{comment.parentUsername} </>
                           )}
                           {modifyMode && comment.commentId === modifyId ? (
                             <CommentWrite
@@ -200,7 +205,7 @@ const CommentList = ({ boardId }) => {
             ))}
         </ul>
       </form>
-      {!modifyMode && !replyMode && (
+      {userData.isLogin && !modifyMode && !replyMode && (
         <CommentWrite boardId={boardId} onSubmit={handleSubmit} />
       )}
     </div>
