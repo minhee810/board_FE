@@ -46,3 +46,22 @@ export const commentUpdate = async (commentId, comment) => {
     console.log(error);
   }
 };
+
+// 대댓글 작성 api
+export const replyComment = async (data, boardId) => {
+  console.log(data);
+  console.log(boardId);
+  let dto = {
+    boardId: boardId,
+    commentContent: data.commentContent,
+    depth: data.depth,
+    parentId: data.parentId,
+    parentUsername: data.parentUsername,
+  };
+  try {
+    const response = await api.post(`/api/comments/reply`, dto);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

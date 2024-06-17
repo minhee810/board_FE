@@ -29,8 +29,10 @@ const CommentWrite = ({
   }, [boardId, commentValue]);
 
   const handleChange = (e) => {
+    console.log("boardId : ", boardId);
     setData({
       ...data,
+      boardId: boardId,
       [e.target.name]: e.target.value,
     });
   };

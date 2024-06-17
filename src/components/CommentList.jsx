@@ -11,9 +11,8 @@ const CommentList = ({ boardId }) => {
   const [cList, setCList] = useState([]);
   const [modifyMode, setModifyMode] = useState(false);
   const [modifyId, setModifyId] = useState("");
-  const [replyMode, setReplyMode] = useState(false);
-  const [btnMode, setBtnMode] = useState("");
   const [replyId, setReplyId] = useState("");
+  const [replyMode, setReplyMode] = useState(false);
 
   useEffect(() => {
     getList(boardId);
@@ -30,6 +29,12 @@ const CommentList = ({ boardId }) => {
       console.log("response : ", response);
       // comment.commentId 가 파라미터와 일치하지 않는 원소만 추출해서 새로운 배열을 생성
       setCList(cList.filter((comment) => comment.commentId !== commentId));
+      // setCList(
+      //   cList.some((comment) => comment.commentId !== commentId)
+      //     ? "삭제된 댓글입니다. "
+
+      //     : ""
+      // );
     }
   };
 
@@ -49,14 +54,6 @@ const CommentList = ({ boardId }) => {
     if (modifyMode === true) {
       setModifyMode(!modifyMode);
     }
-    // setCList((prevComments) =>
-    //   // 댓글 리스트에 새로 추가된 댓글의 내용을 추가할 경우
-    //   // 기존의 댓글 배열에서 내가 수정한 댓글 아이디와 같은 댓글의 아이디를 비교해서 동일하다면 댓글의 내용을 수정한 내용으로 변경하고,
-    //   // 아니면 기존의 댓글 내용 유지
-    //   prevComments.map((comment) =>
-    //     comment.id === updatedComment.id ? updatedComment : comment
-    //   )
-    // );
     setCList((prevComments) =>
       prevComments.some(
         (comment) => comment.commentId === updatedComment.commentId
@@ -78,10 +75,20 @@ const CommentList = ({ boardId }) => {
     console.log(modifyId === cList.commentId);
   };
 
-  const handleReplySubmit = (commentId) => {
+  const handleReplyView = (replyId) => {
     console.log("대댓글 작성 버튼 클릭");
+    setReplyId(replyId);
     setReplyMode(!replyMode);
-    console.log(replyMode);
+    console.log("replyId === cList.commentId :", replyId === cList.commentId);
+  };
+
+  const handleReplySubmit = (replyComment) => {
+    console.log("대댓글 작성 저장 로직 실행");
+    console.log("replyComment : ", replyComment);
+    if (replyMode) {
+      setReplyMode(!replyMode);
+    }
+    getList(boardId);
   };
 
   return (
@@ -111,9 +118,15 @@ const CommentList = ({ boardId }) => {
                   className="commentDiv"
                   style={{ paddingLeft: `${comment.depth}rem` }}
                 >
+                  {/* {comment.isDeleted === "1" ? (
+                    <>
+                      <span> 삭제된 댓글입니다. </span>
+                    </>
+                  ) : (
+                    <> */}
                   <div className="commentHead">
                     <div className="commentHead1">
-                      <div className="commentName">@{comment.username}</div>
+                      <div className="commentName">{comment.username}</div>
                       <div className="commentDate">
                         {dateFormat(comment.createdDate)}
                       </div>
@@ -122,7 +135,7 @@ const CommentList = ({ boardId }) => {
                     <div className="commentHead2">
                       <div
                         className="commentReply"
-                        onClick={() => handleReplySubmit(comment.commentId)}
+                        onClick={() => handleReplyView(comment.commentId)}
                       >
                         답글
                       </div>
@@ -163,23 +176,32 @@ const CommentList = ({ boardId }) => {
                         modifyMode={modifyMode}
                       />
                     ) : (
-                      <p>{comment.commentContent}</p>
+                      <p>
+                        {comment.parentUsername && (
+                          <>@{comment.parentUsername}</>
+                        )}
+                        {comment.commentContent}
+                      </p>
                     )}
                   </div>
+                  {/* </> */}
+                  {/* )} */}
                 </div>
                 <hr className="sidebar-divider d-none d-md-block" />
                 {replyMode && comment.commentId === replyId && (
                   <ReplyWrite
+                    parentUsername={comment.username}
                     parentCommentId={comment.commentId}
                     boardId={boardId}
-                    onSubmit={handleSubmit}
+                    depth={comment.depth}
+                    onSubmit={handleReplySubmit}
                   />
                 )}
               </li>
             ))}
         </ul>
       </form>
-      {!modifyMode && (
+      {!modifyMode && !replyMode && (
         <CommentWrite boardId={boardId} onSubmit={handleSubmit} />
       )}
     </div>
