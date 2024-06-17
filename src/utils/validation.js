@@ -26,8 +26,11 @@ export function regExpFields(event) {
   console.log("regExpFields() 호출");
 
   let fieldId = event.target.name;
+  console.log(fieldId);
   let val = event.target.value;
+  console.log(val);
   const regex = JOIN_VALID[fieldId];
+  console.log(regex);
   if (regex) {
     return regex.test(val);
   }

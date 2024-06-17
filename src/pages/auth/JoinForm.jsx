@@ -3,7 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import PostCode from "../../services/PostCode";
 import api from "../../utils/api";
 import PasswordCheck from "../../components/PasswordCheck";
-import { REPLACE_VALID } from "../../utils/validation";
+import { REPLACE_VALID, regExpFields } from "../../utils/validation";
+import {
+  checkDuplicateEmail,
+  checkDuplicateUsername,
+} from "../../services/auth/JoinService";
+import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
+import { hintMsg } from "../../utils/message";
 
 export const JoinForm = () => {
   const navigate = useNavigate();
@@ -12,7 +18,6 @@ export const JoinForm = () => {
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
-
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -23,27 +28,30 @@ export const JoinForm = () => {
     zipCode: "",
     note: "",
   });
-
-  // useEffect 입력값 변경될 때 마다 검증하기
-  useEffect(() => {}, []);
+  const { validText, setValidText } = useState("");
+  const { isValid, setIsValid } = useState({
+    isUsername: false,
+    isEmail: false,
+    isPassword: false,
+    isPasswordConfirm: false,
+  });
 
   // input 창 상태 관리 + replace 함수 호출
   const handleInputChange = (event, validType = "") => {
-    console.log("handleInputChange() 호출");
-    // 조합형 문자일 경우 그냥 리턴
-    if (event.nativeEvent.isComposing) {
-      return;
+    let { name, value, dataSet } = event.target;
+    // validType 이 주어진 경우 replace 하기
+    console.log("value :", value);
+    setFormData({ ...formData, [name]: value });
+    if (!value.trim()) {
+      alert(+"을 입력해주세요.");
+    }
+    if (validType) {
+      console.log(validType);
+      const filteredValue = value.replace(REPLACE_VALID[validType], "");
+      setFormData({ ...formData, [name]: filteredValue });
     } else {
-      // 조합형 문자가 아닐 경우 REPLACE 함수 호출
-      let { name, value } = event.target;
-      // validType 이 주어진 경우 replace 하기
-      if (validType) {
-        const filteredValue = value.replace(REPLACE_VALID[validType], "");
-        setFormData({ ...formData, [name]: filteredValue });
-      } else {
-        // 아닌 경우 바로 그냥 formDate에 넣어버려
-        setFormData({ ...formData, [name]: value });
-      }
+      // 아닌 경우 바로 그냥 formDate에 넣어버려
+      setFormData({ ...formData, [name]: value });
     }
   };
 
@@ -54,28 +62,35 @@ export const JoinForm = () => {
   };
 
   // api :  사용자 이름 & 이메일 중복 확인
-  const checkDuplicate = async (e) => {
+  const checkDuplicate = async (event) => {
     console.log("checkDuplicate() 호출");
-    e.preventDefault();
-    let name = e.target.name;
-    let requsetURL = "";
-
+    event.preventDefault();
+    let name = event.target.name;
     if (name === "username") {
-      requsetURL = `/api/username/${formData.username}/check`;
+      const result = regExpFields(event);
+      console.log("result : ", result);
+      if (!result) {
+        alert(hintMsg.username);
+        return false;
+        // usernameRef.current.focus();
+      }
+      const response = checkDuplicateUsername(formData.username);
+      console.log(response);
     } else {
-      requsetURL = `/api/email/${formData.email}/check`;
-    }
-    try {
-      const response = await api.get(requsetURL);
-    } catch (error) {
-      console.log("response.status :", error.response.status);
+      const response = checkDuplicateEmail(formData.email);
+      console.log(response);
     }
   };
 
   // api : 회원가입 버튼 클릭 시 폼 제출
   const handleFormSubmit = async (e) => {
-    console.log("handleFormSubmit() 호출");
     e.preventDefault();
+    const { name, value } = e.target;
+    console.log("name :", name);
+    console.log("value : ", value);
+    if (e.target.value) {
+      console.log(e.target.value);
+    }
     try {
       console.log(formData);
       await api.post(`/join`, formData);
@@ -101,6 +116,8 @@ export const JoinForm = () => {
                     <form className="user">
                       <div className="form-group">
                         <input
+                          autoFocus
+                          data-fieldName="이름"
                           type="text"
                           name="username"
                           // onKeyUp={handleInputChange}
@@ -118,7 +135,6 @@ export const JoinForm = () => {
                             type="email"
                             name="email"
                             onChange={(e) => handleInputChange(e, "email")}
-                            onBlur={checkDuplicate}
                             className="form-control form-control-user"
                             placeholder="이메일주소"
                             ref={emailRef}

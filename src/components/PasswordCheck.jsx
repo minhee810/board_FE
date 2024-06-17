@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { isMatch } from "../utils/utility";
+import { regExpFields } from "../utils/validation";
 
 const PasswordCheck = ({ onDataChange }) => {
   const passwordRef = useRef(null);
@@ -8,7 +9,7 @@ const PasswordCheck = ({ onDataChange }) => {
   let pwCheckStatus = false;
 
   // 비밀번호 일치 검사
-  const handlePasswordInput = () => {
+  const handlePasswordInput = (e) => {
     console.log("handlePasswordInput() 호출");
     const password = passwordRef.current.value;
     const passwordConfirm = passwordConfirmRef.current.value;
