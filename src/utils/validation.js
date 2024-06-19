@@ -1,3 +1,4 @@
+import { validate } from "uuid";
 import { hintMsg } from "./message";
 
 export const JOIN_VALID = {
@@ -21,18 +22,21 @@ export const REPLACE_VALID = {
   textarea: /(?:\r\n|\r|\n)/g,
 };
 
-// 정규식 함수
+// 정규식 함수 정규식 체크 결과를 리턴해줌. T/F
 export function regExpFields(event) {
   console.log("regExpFields() 호출");
-
-  let fieldId = event.target.name;
-  console.log(fieldId);
-  let val = event.target.value;
-  console.log(val);
-  const regex = JOIN_VALID[fieldId];
-  console.log(regex);
+  const { name, value } = event.target;
+  const regex = JOIN_VALID[name];
   if (regex) {
-    return regex.test(val);
+    return regex.test(value);
+  }
+}
+
+// 이름과 값 넘겨서 유효성 검사하는 함수
+export function regTest(name, value) {
+  const regex = JOIN_VALID[name];
+  if (regex) {
+    return regex.test(value);
   }
 }
 

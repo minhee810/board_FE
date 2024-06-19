@@ -37,3 +37,13 @@ export function getFormattedDate(org) {
 export function isMatch(str1, str2) {
   return str1 === str2;
 }
+
+let isAlertShown = false;
+
+function showAlert(message) {
+  if (!isAlertShown) {
+    isAlertShown = true;
+    alert(message);
+    isAlertShown = false;
+  }
+}
