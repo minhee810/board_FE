@@ -41,7 +41,6 @@ export function isMatch(str1, str2) {
 // 핸드폰 번호 포매팅
 export function phoneFormat(phone) {
   if (phone.length === 10) {
-    console.log("폰 10자리 ", phone.length);
     return (phone =
       phone.substring(0, 3) +
       "-" +
@@ -49,7 +48,6 @@ export function phoneFormat(phone) {
       "-" +
       phone.substring(6, 10));
   } else if (phone.length === 11) {
-    console.log("폰 11자리 ", phone.length);
     return (phone =
       phone.substring(0, 3) +
       "-" +

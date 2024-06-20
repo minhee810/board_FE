@@ -3,13 +3,13 @@ import { isMatch } from "../utils/utility"; // 이 함수가 비밀번호 일치
 import { regExpFields, regTest } from "../utils/validation";
 import { hintMsg, showMessage } from "../utils/message";
 
-const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
+const PasswordCheck = ({ onDataChange }) => {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [pwCheckStatus, setCheckStatus] = useState("");
+  const [pwCheckStatus, setCheckStatus] = useState(false);
 
   const showAlert = (message) => {
     if (!isAlertVisible) {
@@ -35,6 +35,11 @@ const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
   const handlePasswordConfirmChange = (e) => {
     const newPasswordConfirm = e.target.value;
     setPasswordConfirm(newPasswordConfirm);
+    let result = isMatch(password, passwordConfirm);
+    if (result) {
+      showAlert("비밀번호가 일치합니다.");
+      setCheckStatus(true);
+    }
   };
 
   const handleCheck = (e) => {
@@ -43,9 +48,8 @@ const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
       console.log(result);
       if (result) {
         showAlert("비밀번호가 일치합니다.");
-        setPassword(password);
-        // 비밀번호 일치 확인 후 부모 컴포넌트로 password값과 함께 함수 호출하기
-        onDataChange(password, pwCheckStatus);
+        // console.log("pwCheckStatus : ", pwCheckStatus);
+        onDataChange(password);
       } else {
         showAlert("비밀번호가 일치하지 않습니다.");
       }

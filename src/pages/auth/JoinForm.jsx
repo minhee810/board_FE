@@ -1,25 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PostCode from "../../services/PostCode";
 import api from "../../utils/api";
 import PasswordCheck from "../../components/PasswordCheck";
-import {
-  JOIN_VALID,
-  REPLACE_VALID,
-  regExpFields,
-  regTest,
-} from "../../utils/validation";
+import { REPLACE_VALID, regTest } from "../../utils/validation";
 import {
   checkDuplicateEmail,
   checkDuplicateUsername,
 } from "../../services/auth/JoinService";
-import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
 import { hintMsg } from "../../utils/message";
-import { Alert } from "react-bootstrap";
 import { phoneFormat } from "../../utils/utility";
 
 export const JoinForm = () => {
   const navigate = useNavigate();
+
+  const [errors, setErrors] = useState([]);
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPwValid, setIsPwValid] = useState(false);
@@ -49,7 +44,6 @@ export const JoinForm = () => {
   // input 창 상태 관리 + replace 함수 호출
   const handleInputChange = (event) => {
     let { name, value, dataset } = event.target;
-
     if (dataset.check) {
       if (name) {
         const filteredValue = value.replace(REPLACE_VALID[name], "");
@@ -58,12 +52,24 @@ export const JoinForm = () => {
         setFormData({ ...formData, [name]: value });
       }
     }
+    if (name === "email") {
+      setIsEmailValid(false); // 이메일이 변경되면 유효성 검사를 초기화
+    }
+
+    if (name === "username") {
+      setIsUsernameValid(false); // 이메일이 변경되면 유효성 검사를 초기화
+    }
+
+    if (name === "password") {
+      setIsPwValid(false); // 이메일이 변경되면 유효성 검사를 초기화
+    }
   };
 
   // 비밀번호 자식 컴포넌트에서 가져온 값 저장
-  const handlePasswordChange = (password, pwCheckStatus) => {
+  const handlePasswordChange = (password) => {
     console.log("handlePasswordChange() 호출");
-    setIsPwValid(pwCheckStatus);
+
+    // setIsPwValid(pwCheckStatus);
     setFormData({ ...formData, password: password });
   };
 
@@ -85,7 +91,6 @@ export const JoinForm = () => {
         setValidText(response.msg);
         setIsEmailValid(true);
       }
-      console.log(response.code);
       if (response.error) {
         setValidText(response.msg);
       }
@@ -118,22 +123,58 @@ export const JoinForm = () => {
     setFormData({ ...formData, phone: val });
   };
 
-  // api : 회원가입 버튼 클릭 시 폼 제출
+  // // api : 회원가입 버튼 클릭 시 폼 제출
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const { name, value, dataset } = e.target;
-
-    console.log("dataset : ", dataset.name);
+    /**
+     * 회원가입 버튼 클릭 시
+     * 1. 모든 필드가 널값이 아닌지 확인
+     * 2. 중복 검사가 모두 실시되었는지 확인
+     * 3. 서버로 데이터 전송
+     */
     for (let key in formData) {
+      let field = "";
       if (formData[key].trim() === "") {
         console.log("key : ", key);
-        alert(`${key} 을(를) 입력해주세요.`);
+        switch (key) {
+          case "username":
+            field = "이름";
+            break;
+          case "email":
+            field = "이메일";
+            break;
+          case "password":
+            field = "비밀번호";
+            break;
+          case "address":
+            field = "주소";
+            break;
+          case "detailAddress":
+            field = "상세주소";
+            break;
+          case "note":
+            field = "참고사항";
+            break;
+          default:
+            field = "빈 칸";
+        }
+
+        alert(`${field}을(를) 입력해주세요.`);
         return false;
       }
     }
+    if (formData.username === "") {
+      alert("사용자 이름을 작성해주세요.");
+      return false;
+    }
+    if (formData.email === "") {
+      alert("이메일을 작성해주세요");
+    }
+
     if (window.confirm("회원가입을 진행하시겠습니까? ")) {
       try {
         await api.post(`/join`, formData);
+        navigate("/login");
       } catch (error) {
         console.log("response.status :", error.response.status);
       }
@@ -170,7 +211,7 @@ export const JoinForm = () => {
                           className="form-control form-control-user"
                           placeholder="이름"
                           ref={usernameRef}
-                          value={formData.username}
+                          value={formData.username || ""}
                         />
                         {validText && formData.username && (
                           <p
@@ -188,7 +229,7 @@ export const JoinForm = () => {
                           <input
                             data-name="이메일"
                             data-check={true}
-                            type="email"
+                            type="text"
                             name="email"
                             onChange={(e) => handleInputChange(e)}
                             className="form-control form-control-user"
@@ -209,11 +250,7 @@ export const JoinForm = () => {
                         </div>
                       </div>
                       {/* password checker component */}
-                      <PasswordCheck
-                        isPwValid={isPwValid}
-                        onDataChange={handlePasswordChange}
-                        isAlertShown={isAlertShown}
-                      />
+                      <PasswordCheck onDataChange={handlePasswordChange} />
                       <div className="form-group">
                         <input
                           data-name="휴대전화 번호"
@@ -247,12 +284,14 @@ export const JoinForm = () => {
                       </div>
                       <div className="form-group">
                         <input
+                          data-check={false}
                           data-name="상세주소"
                           type="text"
                           name="detailAddress"
-                          onChange={handleInputChange}
+                          onChange={(e) => handleInputChange(e)}
                           className="form-control form-control-user"
                           placeholder="상세주소"
+                          value={formData.detailAddress}
                         />
                       </div>
                       <div className="form-group row">
