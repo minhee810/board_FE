@@ -8,6 +8,12 @@ export const checkDuplicateUsername = async (username) => {
     return response.data;
   } catch (error) {
     console.log("error.response.status : ", error.response.status);
+    console.log("error.response.data : ", error.response.data);
+    return {
+      error: true,
+      status: error.response.status,
+      msg: error.response.data.msg,
+    };
   }
 };
 
@@ -18,5 +24,11 @@ export const checkDuplicateEmail = async (email) => {
     return response.data;
   } catch (error) {
     console.log("error.response.status : ", error.response.status);
+    console.log("error.response.data : ", error.response.data);
+    return {
+      error: true,
+      status: error.response.status,
+      msg: error.response.data.msg,
+    };
   }
 };

@@ -1,47 +1,54 @@
-import React, { useRef, useState } from "react";
-import { isMatch } from "../utils/utility";
+import React, { useEffect, useRef, useState } from "react";
+import { isMatch } from "../utils/utility"; // 이 함수가 비밀번호 일치를 확인하는 함수라고 가정합니다.
 import { regExpFields, regTest } from "../utils/validation";
-import { hintMsg } from "../utils/message";
+import { hintMsg, showMessage } from "../utils/message";
 
-const PasswordCheck = ({ onDataChange, isAlertShown }) => {
+const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  let pwCheckStatus = false;
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [pwCheckStatus, setCheckStatus] = useState("");
 
-  // 비밀번호 일치 검사
-  const handlePasswordInput = (e) => {
-    console.log("handlePasswordInput() 호출");
-    const password = passwordRef.current.value;
-    const passwordConfirm = passwordConfirmRef.current.value;
-
-    if (password && passwordConfirm && !isMatch(password, passwordConfirm)) {
-      setSuccessMessage("");
-      setErrorMessage("비밀번호가 일치하지 않습니다.");
-      pwCheckStatus = false;
-      return false;
-    }
-    if (password && passwordConfirm && isMatch(password, passwordConfirm)) {
-      setErrorMessage("");
-      setSuccessMessage("비밀번호가 일치합니다.");
-      console.log("handleInputChange() 호출");
-      pwCheckStatus = true;
-      if (pwCheckStatus) {
-        setPassword(password);
-        // 비밀번호 일치 확인 후 부모 컴포넌트로 password값과 함께 함수 호출하기
-        onDataChange(password);
-      }
+  const showAlert = (message) => {
+    if (!isAlertVisible) {
+      setIsAlertVisible(true);
+      alert(message);
+      setTimeout(() => setIsAlertVisible(false), 100); // 100ms 후에 상태를 변경하여 다시 알림을 표시할 수 있도록 함
     }
   };
 
   const handleRegTest = (e) => {
     const { name, value } = e.target;
-    console.log("value : ", value);
     if (!regTest(name, value)) {
-      setErrorMessage(hintMsg.password);
+      showAlert(hintMsg.password);
       return false;
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+  };
+
+  const handlePasswordConfirmChange = (e) => {
+    const newPasswordConfirm = e.target.value;
+    setPasswordConfirm(newPasswordConfirm);
+  };
+
+  const handleCheck = (e) => {
+    if (password && passwordConfirm) {
+      let result = isMatch(password, passwordConfirm);
+      console.log(result);
+      if (result) {
+        showAlert("비밀번호가 일치합니다.");
+        setPassword(password);
+        // 비밀번호 일치 확인 후 부모 컴포넌트로 password값과 함께 함수 호출하기
+        onDataChange(password, pwCheckStatus);
+      } else {
+        showAlert("비밀번호가 일치하지 않습니다.");
+      }
     }
   };
 
@@ -50,12 +57,13 @@ const PasswordCheck = ({ onDataChange, isAlertShown }) => {
       <div className="form-group row">
         <div className="col-sm-6 mb-3 mb-sm-0">
           <input
-            data-name="비밀번호"
             ref={passwordRef}
+            data-name="비밀번호"
+            value={password}
             type="password"
             name="password"
             onBlur={(e) => handleRegTest(e)}
-            onChange={(e) => handlePasswordInput(e)}
+            onChange={handlePasswordChange}
             autoComplete="off"
             className="form-control form-control-user"
             placeholder="비밀번호"
@@ -63,20 +71,18 @@ const PasswordCheck = ({ onDataChange, isAlertShown }) => {
         </div>
         <div className="col-sm-6">
           <input
-            data-name="비밀번호 확인"
             ref={passwordConfirmRef}
+            data-name="비밀번호 확인"
+            value={passwordConfirm}
             type="password"
             name="passwordConfirm"
-            onBlur={(e) => handleRegTest(e)}
-            onChange={(e) => handlePasswordInput(e)}
-            // onBlur={handleRegTest}
-            className="form-control form-control-user"
+            onBlur={handleCheck}
+            onChange={handlePasswordConfirmChange}
             autoComplete="off"
+            className="form-control form-control-user"
             placeholder="비밀번호 확인"
           />
         </div>
-        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       </div>
     </div>
   );

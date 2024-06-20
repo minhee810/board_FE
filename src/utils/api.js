@@ -33,7 +33,10 @@ api.interceptors.response.use(
   function (error) {
     console.log("error interceptor() 호출");
     if (error.response && error.response.status === 409) {
-      alert(error.response.data.msg);
+      if (error.response.data.code === -2) {
+        console.log(error.response.data.msg);
+      }
+      // alert(error.response.data.msg);
     }
     if (error.response && error.response.status === 400) {
       alert(error.response.data.msg);
@@ -49,6 +52,7 @@ api.interceptors.response.use(
       sessionStorage.removeItem("userData");
     }
     return Promise.reject(error);
+    // return error;
   }
 );
 export default api;

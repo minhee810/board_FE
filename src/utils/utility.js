@@ -38,12 +38,25 @@ export function isMatch(str1, str2) {
   return str1 === str2;
 }
 
-let isAlertShown = false;
-
-function showAlert(message) {
-  if (!isAlertShown) {
-    isAlertShown = true;
-    alert(message);
-    isAlertShown = false;
+// 핸드폰 번호 포매팅
+export function phoneFormat(phone) {
+  if (phone.length === 10) {
+    console.log("폰 10자리 ", phone.length);
+    return (phone =
+      phone.substring(0, 3) +
+      "-" +
+      phone.substring(3, 6) +
+      "-" +
+      phone.substring(6, 10));
+  } else if (phone.length === 11) {
+    console.log("폰 11자리 ", phone.length);
+    return (phone =
+      phone.substring(0, 3) +
+      "-" +
+      phone.substring(3, 7) +
+      "-" +
+      phone.substring(7, 11));
+  } else if (phone) {
+    return phone;
   }
 }

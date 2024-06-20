@@ -16,12 +16,13 @@ import {
 import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
 import { hintMsg } from "../../utils/message";
 import { Alert } from "react-bootstrap";
+import { phoneFormat } from "../../utils/utility";
 
 export const JoinForm = () => {
   const navigate = useNavigate();
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [isPwValid, setIsPwValid] = useState(false);
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
@@ -35,7 +36,7 @@ export const JoinForm = () => {
     zipCode: "",
     note: "",
   });
-  const { validText, setValidText } = useState("");
+  const [validText, setValidText] = useState("");
   const { isValid, setIsValid } = useState({
     isUsername: false,
     isEmail: false,
@@ -48,29 +49,21 @@ export const JoinForm = () => {
   // input 창 상태 관리 + replace 함수 호출
   const handleInputChange = (event) => {
     let { name, value, dataset } = event.target;
-    setFormData({ ...formData, [name]: value });
-    console.log(name + "을 체크합니다.");
-    console.log("dataset.check : ", dataset.check);
-    if (dataset.check) {
-      replaceChar(event);
-    }
-    // 공백 검사는 blur 에서 처리
-  };
 
-  // 글자 재배치
-  const replaceChar = (event) => {
-    let { name, value } = event.target;
-    if (name) {
-      const filteredValue = value.replace(REPLACE_VALID[name], "");
-      setFormData({ ...formData, [name]: filteredValue });
-    } else {
-      setFormData({ ...formData, [name]: value });
+    if (dataset.check) {
+      if (name) {
+        const filteredValue = value.replace(REPLACE_VALID[name], "");
+        setFormData({ ...formData, [name]: filteredValue });
+      } else {
+        setFormData({ ...formData, [name]: value });
+      }
     }
   };
 
   // 비밀번호 자식 컴포넌트에서 가져온 값 저장
-  const handlePasswordChange = (password) => {
+  const handlePasswordChange = (password, pwCheckStatus) => {
     console.log("handlePasswordChange() 호출");
+    setIsPwValid(pwCheckStatus);
     setFormData({ ...formData, password: password });
   };
 
@@ -78,18 +71,26 @@ export const JoinForm = () => {
   const checkDuplicate = async (e) => {
     console.log("checkDuplicate() 호출");
     e.preventDefault();
-    // let name = event.target.name;
     const { name, value, dataset } = e.target;
     let fieldName = dataset.email;
     const emailValue = emailRef.current.value;
 
     if (name === "username") {
       if (!regTest(name, value)) {
-        alert(hintMsg.username);
+        setValidText(hintMsg.username);
         return false;
       }
-      checkDuplicateUsername(formData.username);
+      const response = await checkDuplicateUsername(formData.username);
+      if (response.code === 2) {
+        setValidText(response.msg);
+        setIsEmailValid(true);
+      }
+      console.log(response.code);
+      if (response.error) {
+        setValidText(response.msg);
+      }
     }
+
     if (fieldName === "email") {
       if (!emailValue.trim()) {
         alert("이메일을 입력해주세요");
@@ -100,35 +101,45 @@ export const JoinForm = () => {
         console.log("이메일 유효성 검사 실패");
         return false;
       }
-      console.log("이메일 유효성 검사 성공입니다.");
-      checkDuplicateEmail(formData.email);
+      const response = await checkDuplicateEmail(formData.email);
+      console.log("이메일 중복 확인 : ", response);
+      if (response.code === 1) {
+        console.log("이메일 중복확인 성공");
+        setIsEmailValid(true);
+      }
+      if (response.error) {
+        alert(response.msg);
+      }
     }
   };
 
-  const handleSpaceCheck = (e) => {
-    console.log("공백체크 알림입니다 .");
-    const { name, value, dataset } = e.target;
-    if (!value.trim()) {
-      alert(dataset.name + "을 입력해주세요.");
-      return false;
-    }
-    return true;
+  const hadleFmt = (e) => {
+    const val = phoneFormat(e.target.value);
+    setFormData({ ...formData, phone: val });
   };
+
   // api : 회원가입 버튼 클릭 시 폼 제출
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const { name, value, dataSet } = e.target;
+    const { name, value, dataset } = e.target;
 
-    if (e.target.value) {
-      console.log(e.target.value);
+    console.log("dataset : ", dataset.name);
+    for (let key in formData) {
+      if (formData[key].trim() === "") {
+        console.log("key : ", key);
+        alert(`${key} 을(를) 입력해주세요.`);
+        return false;
+      }
     }
-    try {
-      console.log(formData);
-      await api.post(`/join`, formData);
-    } catch (error) {
-      console.log("response.status :", error.response.status);
+    if (window.confirm("회원가입을 진행하시겠습니까? ")) {
+      try {
+        await api.post(`/join`, formData);
+      } catch (error) {
+        console.log("response.status :", error.response.status);
+      }
     }
   };
+
   return (
     <>
       <div className="bg-gradient-primary">
@@ -161,10 +172,17 @@ export const JoinForm = () => {
                           ref={usernameRef}
                           value={formData.username}
                         />
+                        {validText && formData.username && (
+                          <p
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                            }}
+                          >
+                            {validText}
+                          </p>
+                        )}
                       </div>
-                      {errorMessage && (
-                        <p style={{ color: "red" }}>{errorMessage}</p>
-                      )}
                       <div className="form-group row">
                         <div className="col-sm-9 mb-3 mb-sm-0">
                           <input
@@ -192,6 +210,7 @@ export const JoinForm = () => {
                       </div>
                       {/* password checker component */}
                       <PasswordCheck
+                        isPwValid={isPwValid}
                         onDataChange={handlePasswordChange}
                         isAlertShown={isAlertShown}
                       />
@@ -202,6 +221,7 @@ export const JoinForm = () => {
                           type="phone"
                           name="phone"
                           onChange={(e) => handleInputChange(e)}
+                          onBlur={(e) => hadleFmt(e)}
                           className="form-control form-control-user"
                           placeholder="휴대폰번호"
                           ref={phoneRef}
