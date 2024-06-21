@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/api";
 import {
-  commentSave,
   commentUpdate,
   commentWrite,
 } from "../services/comment/CommentService";
@@ -29,7 +28,6 @@ const CommentWrite = ({
   }, [boardId, commentValue]);
 
   const handleChange = (e) => {
-    console.log("boardId : ", boardId);
     setData({
       ...data,
       boardId: boardId,
@@ -38,6 +36,9 @@ const CommentWrite = ({
   };
 
   const handleSave = async () => {
+    if (data.commentContent === "" || data.commentContent === undefined) {
+      alert("댓글 내용을 입력해주세요");
+    }
     try {
       const response = await commentWrite(data);
       // 부모 컴포넌트로 데이터 전송
@@ -52,6 +53,10 @@ const CommentWrite = ({
   };
 
   const handleUpdate = async () => {
+    if (data.commentContent === "" || data.commentContent === undefined) {
+      alert("댓글 내용을 입력해주세요");
+    }
+
     try {
       const response = await commentUpdate(commentId, data);
       console.log(response.data);

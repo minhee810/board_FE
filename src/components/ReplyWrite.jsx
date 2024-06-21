@@ -28,6 +28,9 @@ const ReplyWrite = ({
   };
 
   const handleSubmit = async () => {
+    if (data.commentContent === "" || data.commentContent === undefined) {
+      alert("댓글 내용을 입력해주세요");
+    }
     try {
       console.log("data : ", data);
       console.log("boardId : ", boardId);

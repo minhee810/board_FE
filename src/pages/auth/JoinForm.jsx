@@ -16,7 +16,9 @@ export const JoinForm = () => {
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPwValid, setIsPwValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [isPhoneValid, setIsPhoneValid] = useState(false);
+  const [isMatch, setIsMatch] = useState(false);
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
@@ -32,24 +34,27 @@ export const JoinForm = () => {
     note: "",
   });
   const [validText, setValidText] = useState("");
-  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  // const [isAlertVisible, setIsAlertVisible] = useState(false);
+
+  let isAlertVisible = useRef(false);
 
   const showAlert = (message) => {
-    if (!isAlertVisible) {
-      setIsAlertVisible(true);
+    if (!isAlertVisible.current) {
+      isAlertVisible.current = true;
       alert(message);
-      setTimeout(() => setIsAlertVisible(false), 100); // 100ms 후에 상태를 변경하여 다시 알림을 표시할 수 있도록 함
+      console.log("message console");
+      setTimeout(() => {
+        isAlertVisible.current = false;
+      }, 100); // 100ms 후에 상태를 변경하여 다시 알림을 표시할 수 있도록 함
     }
   };
-
   const handlePasswordMatch = (isMatch) => {
-    console.log("parent isMatch : ", isMatch);
-    setIsPwValid(isMatch);
+    setIsMatch(isMatch);
   };
+
   // input 창 상태 관리 + replace 함수 호출
   const handleInputChange = (event) => {
     let { name, value, dataset } = event.target;
-
     if (dataset.check) {
       if (name) {
         const filteredValue = value.replace(REPLACE_VALID[name], "");
@@ -63,37 +68,37 @@ export const JoinForm = () => {
     }
 
     if (name === "username") {
-      setIsUsernameValid(false); // 이메일이 변경되면 유효성 검사를 초기화
+      setIsUsernameValid(false); // userbane 변경되면 유효성 검사를 초기화
     }
 
     if (name === "password") {
-      setIsPwValid(false); // 이메일이 변경되면 유효성 검사를 초기화
+      setIsPasswordValid(false); // password 변경되면 유효성 검사를 초기화
     }
   };
 
-  // 비밀번호 자식 컴포넌트에서 가져온 값 저장
-  const handlePasswordChange = (password, isAlertVisible) => {
-    console.log("handlePasswordChange() 호출");
-    console.log("isAlertVisible :", isAlertVisible);
-    console.log("join form - password : ", password);
-    console.log("isPwValid : ", isPwValid);
-    // console.log("pwCheckStatus : ", pwCheckStatus);
-    // setPwCheckStatus(pwCheckStatus);
-    // console.log("비밀번호 상태값 잘 오니  ? ", pwCheckStatus);
-    if (!isPwValid) {
-      showAlert("비밀번호가 서로 일치하지 않습니다.");
+  const handlePasswordChange = (password, isMatchs) => {
+    console.log("제출된 password : ", password);
+    console.log("일치하는가 ? ", isMatchs);
+    setIsMatch(isMatchs);
+
+    console.log("isAlertVisible :", isAlertVisible.current);
+    if (isMatchs) {
+      if (!isAlertVisible.current) {
+        console.log("비밀번호가 일치");
+        showAlert("비밀번호가 서로 일치합니다.");
+      }
     } else {
-      showAlert("비밀번호가 서로 일치합니다.");
-      setIsAlertVisible(isAlertVisible);
-      // setIsPwValid(pwCheckStatus);
-      setIsPwValid(true);
+      if (!isAlertVisible.current) {
+        console.log("비밀번호가 일치하지 않음.");
+        showAlert("비밀번호가 서로 일치하지 않습니다.");
+        setIsMatch(false);
+      }
     }
     setFormData({ ...formData, password: password });
   };
 
   // api :  사용자 이름 & 이메일 중복 확인
   const checkDuplicate = async (e) => {
-    console.log("checkDuplicate() 호출");
     e.preventDefault();
     const { name, value, dataset } = e.target;
     let fieldName = dataset.email;
@@ -124,7 +129,6 @@ export const JoinForm = () => {
         return false;
       }
       const response = await checkDuplicateEmail(formData.email);
-      console.log("이메일 중복 확인 : ", response);
       if (response.code === 1) {
         setIsEmailValid(true);
       }
@@ -135,16 +139,19 @@ export const JoinForm = () => {
   };
 
   const hadleFmt = (e) => {
-    setIsAlertVisible(false);
-    console.log("이게 왜 호출돼?");
-    const { name, value, dataset } = e.target;
+    const { name, value } = e.target;
 
     if (!regTest(name, value)) {
-      showAlert(hintMsg.phone);
+      if (formData.phone !== "") {
+        showAlert(hintMsg.phone);
+      }
+
       return false;
     } else {
-      showAlert("사용 가능한 휴대전화 번호입니다.");
-      setIsPhoneValid(true);
+      if (!isPhoneValid) {
+        showAlert("사용 가능한 휴대전화 번호입니다.");
+        setIsPhoneValid(true);
+      }
     }
     const val = phoneFormat(e.target.value);
     setFormData({ ...formData, phone: val });
@@ -182,13 +189,6 @@ export const JoinForm = () => {
         return false;
       }
     }
-    if (formData.username === "") {
-      alert("사용자 이름을 작성해주세요.");
-      return false;
-    }
-    if (formData.email === "") {
-      alert("이메일을 작성해주세요");
-    }
 
     if (!isEmailValid) {
       showAlert("이메일 중복 검사를 진행해주세요");
@@ -198,12 +198,17 @@ export const JoinForm = () => {
       showAlert("휴대전화 번호 형식이 올바르지 않습니다.");
       return false;
     }
-    if (!isPwValid) {
+    if (!isPasswordValid) {
       showAlert("비밀번호가 일치하지 않습니다.");
       return false;
     }
     if (!isUsernameValid) {
       showAlert("사용자 이름이 유효하지 않습니다.");
+      return false;
+    }
+
+    if (!regTest("password", formData.password)) {
+      showAlert(hintMsg.password);
       return false;
     }
     if (window.confirm("회원가입을 진행하시겠습니까? ")) {
@@ -214,6 +219,9 @@ export const JoinForm = () => {
         console.log("response.status :", error.response.status);
       }
     }
+  };
+  const handlePasswordValid = (passwordValid) => {
+    setIsPasswordValid(passwordValid);
   };
 
   return (
@@ -288,6 +296,7 @@ export const JoinForm = () => {
                       <PasswordCheck
                         onDataChange={handlePasswordChange}
                         pwCheckStatus={pwCheckStatus}
+                        onPasswordValid={handlePasswordValid}
                         onPasswordMatch={handlePasswordMatch}
                       />
                       <div className="form-group">

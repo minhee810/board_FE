@@ -3,6 +3,7 @@ import "../../assets/styles/board/board-detail.css";
 import { UserObjContext } from "../../context/UserObjContext";
 import "../../assets/styles/board/load-file.css";
 import { v4 as uuidv4 } from "uuid";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 // 초기값은 빈 객체로 초기화
 const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
@@ -10,8 +11,6 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
   const [data, setData] = useState(initDetail);
   const [files, setFiles] = useState([]); // 기존 파일 배열
   const [fileIdList, setFileIdList] = useState([]);
-  const [empFiles, setEmpFiles] = useState([]); // 화면 보여주기 용
-  const { userData, setUserData } = useContext(UserObjContext);
 
   // 각 필드에 초깃 값을 할당
   // 의존성 배열을 추가하는 이유 : 부모가 넘겨준 props가 변경될 때마다 재 랜더링을 해서 상태변경을 시켜주기 위해
@@ -26,8 +25,6 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
       ...data,
       [e.target.name]: e.target.value,
     });
-    // console.log("files : ", files);
-    // console.log(fileIdList);
   };
 
   // 파일값 변경 체크
@@ -46,7 +43,15 @@ const BoardForm = ({ initDetail = {}, fileList, onSubmit }) => {
   }; /// ...  하는 이유 배열에 배열을 추가하는 것이기 땨문에 중첩을 피하기 위해 다음과 같이 표기
 
   // 제출 버튼 : 부모 컴포넌트로 값을 넘기기 예를 들면, 수정페이지, 작성페이지, 상세보기 페이지
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    if (data.title === "" || data.title === undefined) {
+      alert("제목을 입력해주세요");
+      return false;
+    }
+    if (data.contetnt === "" || data.content === undefined) {
+      alert("내용을 입력해주세요");
+      return false;
+    }
     console.log("data :", data);
     onSubmit({ ...data, fileIdList });
   };

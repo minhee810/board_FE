@@ -15,7 +15,7 @@ const LoginForm = () => {
   });
 
   const handleChange = (e) => {
-    console.log("handleChange() 호출");
+    console.log("handleChange() 호출", e.target.name, ": ", e.target.value);
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -25,12 +25,13 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     console.log("handleSubmit() 호출");
     e.preventDefault();
-    console.log("email : ", formData.email);
-    if (formData.email === "") {
+    console.log("비밀번호 입력값 : ", formData.password, formData.email);
+    if (formData.email === "" || formData.email === undefined) {
+      console.log(formData.email);
       alert("이메일을 입력해주세요.");
       return false;
     }
-    if (formData.password === "") {
+    if (formData.password === "" || formData.password === undefined) {
       alert("비밀번호를 입력해주세요");
       return false;
     }
@@ -57,11 +58,7 @@ const LoginForm = () => {
   // 아이디 저장 체크박스 활성화
   const handleRememberId = () => {
     console.log("check 발생");
-    // 로컬스토리지에 LS_KEY_SAVE_ID_FLAG 라는 키값으로 아이디 기억 버튼의 상태를 저장
-    // 체크 ->  true 언체크 -> false
-    // 기본 값이 false
     localStorage.setItem(LS_KEY_SAVE_ID_FLAG, !saveIDFlag);
-    // 상태 변경해서 저장
     setSaveIDFlag(!saveIDFlag);
   };
 
@@ -111,7 +108,7 @@ const LoginForm = () => {
                             className="form-control form-control-user"
                             aria-describedby="emailHelp"
                             placeholder="Enter Email Address..."
-                            value={formData.email}
+                            value={formData.email || ""}
                           />
                         </div>
                         <div className="form-group">
@@ -119,6 +116,7 @@ const LoginForm = () => {
                             type="password"
                             name="password"
                             onChange={handleChange}
+                            value={formData.password || ""}
                             autoComplete="off"
                             className="form-control form-control-user"
                             placeholder="Password"
