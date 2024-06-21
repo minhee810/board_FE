@@ -3,7 +3,7 @@ import { isMatch } from "../utils/utility"; // 이 함수가 비밀번호 일치
 import { regExpFields, regTest } from "../utils/validation";
 import { hintMsg, showMessage } from "../utils/message";
 
-const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
+const PasswordCheck = ({ onDataChange }) => {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
@@ -43,10 +43,12 @@ const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
       console.log(result);
       if (result) {
         showAlert("비밀번호가 일치합니다.");
+        setCheckStatus(true);
         setPassword(password);
         // 비밀번호 일치 확인 후 부모 컴포넌트로 password값과 함께 함수 호출하기
         onDataChange(password, pwCheckStatus);
       } else {
+        setCheckStatus(false);
         showAlert("비밀번호가 일치하지 않습니다.");
       }
     }
@@ -59,7 +61,7 @@ const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
           <input
             ref={passwordRef}
             data-name="비밀번호"
-            value={password}
+            value={password || ""}
             type="password"
             name="password"
             onBlur={(e) => handleRegTest(e)}
@@ -73,7 +75,7 @@ const PasswordCheck = ({ isPwValid, onDataChange, isAlertShown }) => {
           <input
             ref={passwordConfirmRef}
             data-name="비밀번호 확인"
-            value={passwordConfirm}
+            value={passwordConfirm || ""}
             type="password"
             name="passwordConfirm"
             onBlur={handleCheck}

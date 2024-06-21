@@ -85,7 +85,7 @@ export const JoinForm = () => {
         setValidText(response.msg);
         setIsEmailValid(true);
       }
-      console.log(response.code);
+      // console.log(response.code);
       if (response.error) {
         setValidText(response.msg);
       }
@@ -127,6 +127,7 @@ export const JoinForm = () => {
     for (let key in formData) {
       if (formData[key].trim() === "") {
         console.log("key : ", key);
+
         alert(`${key} 을(를) 입력해주세요.`);
         return false;
       }
