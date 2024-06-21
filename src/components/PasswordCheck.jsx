@@ -3,13 +3,20 @@ import { isMatch } from "../utils/utility"; // 이 함수가 비밀번호 일치
 import { regExpFields, regTest } from "../utils/validation";
 import { hintMsg, showMessage } from "../utils/message";
 
-const PasswordCheck = ({ onDataChange }) => {
+const PasswordCheck = ({ onDataChange, onPasswordMatch }) => {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [pwCheckStatus, setCheckStatus] = useState(false);
+
+  useEffect(() => {
+    // 비밀번호와 비밀번호 확인 값이 변경될 때마다 일치 여부를 검사
+    const isMatch = password === passwordConfirm;
+    console.log("비밀번호가 일치합니까? useEffect : ", isMatch);
+    onPasswordMatch(isMatch);
+  }, [password, passwordConfirm, onPasswordMatch]);
 
   const showAlert = (message) => {
     if (!isAlertVisible) {
@@ -23,13 +30,17 @@ const PasswordCheck = ({ onDataChange }) => {
     const { name, value } = e.target;
     if (!regTest(name, value)) {
       showAlert(hintMsg.password);
+      setCheckStatus(false);
       return false;
     }
+
+    // 비밀번호 입력란의 데이터를 변경했을 경우, 비밀번호 비교를 다시 진행해야한다.
   };
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
+    setCheckStatus(false);
   };
 
   const handlePasswordConfirmChange = (e) => {
@@ -37,23 +48,29 @@ const PasswordCheck = ({ onDataChange }) => {
     setPasswordConfirm(newPasswordConfirm);
     let result = isMatch(password, passwordConfirm);
     if (result) {
-      showAlert("비밀번호가 일치합니다.");
       setCheckStatus(true);
     }
   };
 
+  // 바꾸기 전에
+  // useEffect(() => {
+  //   if (password) {
+  //     onDataChange(password, pwCheckStatus);
+  //   }
+  // }, [pwCheckStatus, password, onDataChange]);
+
   const handleCheck = (e) => {
     if (password && passwordConfirm) {
       let result = isMatch(password, passwordConfirm);
-      console.log(result);
+      console.log("password 비교 결과 : ", result);
       if (result) {
-        showAlert("비밀번호가 일치합니다.");
-        setPassword(password);
-        // 비밀번호 일치 확인 후 부모 컴포넌트로 password값과 함께 함수 호출하기
-        onDataChange(password, pwCheckStatus);
+        // showAlert("비밀번호가 일치합니다.");
+        setCheckStatus(true);
+        onDataChange(password, true, true); // 비밀번호가 일치할 때
       } else {
         setCheckStatus(false);
-        showAlert("비밀번호가 일치하지 않습니다.");
+        // showAlert("비밀번호가 일치하지 않습니다.");
+        onDataChange(null, false, true); // 비밀번호가 일치하지 않을 때
       }
     }
   };

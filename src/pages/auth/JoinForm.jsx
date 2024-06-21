@@ -13,14 +13,14 @@ import { phoneFormat } from "../../utils/utility";
 
 export const JoinForm = () => {
   const navigate = useNavigate();
-
-  const [errors, setErrors] = useState([]);
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPwValid, setIsPwValid] = useState(false);
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
+  const [pwCheckStatus, setPwCheckStatus] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -32,18 +32,24 @@ export const JoinForm = () => {
     note: "",
   });
   const [validText, setValidText] = useState("");
-  const { isValid, setIsValid } = useState({
-    isUsername: false,
-    isEmail: false,
-    isPassword: false,
-    isPasswordConfirm: false,
-  });
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
 
-  const [isAlertShown, setIsAlertShown] = useState(false);
+  const showAlert = (message) => {
+    if (!isAlertVisible) {
+      setIsAlertVisible(true);
+      alert(message);
+      setTimeout(() => setIsAlertVisible(false), 100); // 100ms 후에 상태를 변경하여 다시 알림을 표시할 수 있도록 함
+    }
+  };
 
+  const handlePasswordMatch = (isMatch) => {
+    console.log("parent isMatch : ", isMatch);
+    setIsPwValid(isMatch);
+  };
   // input 창 상태 관리 + replace 함수 호출
   const handleInputChange = (event) => {
     let { name, value, dataset } = event.target;
+
     if (dataset.check) {
       if (name) {
         const filteredValue = value.replace(REPLACE_VALID[name], "");
@@ -66,10 +72,22 @@ export const JoinForm = () => {
   };
 
   // 비밀번호 자식 컴포넌트에서 가져온 값 저장
-  const handlePasswordChange = (password) => {
+  const handlePasswordChange = (password, isAlertVisible) => {
     console.log("handlePasswordChange() 호출");
-
-    // setIsPwValid(pwCheckStatus);
+    console.log("isAlertVisible :", isAlertVisible);
+    console.log("join form - password : ", password);
+    console.log("isPwValid : ", isPwValid);
+    // console.log("pwCheckStatus : ", pwCheckStatus);
+    // setPwCheckStatus(pwCheckStatus);
+    // console.log("비밀번호 상태값 잘 오니  ? ", pwCheckStatus);
+    if (!isPwValid) {
+      showAlert("비밀번호가 서로 일치하지 않습니다.");
+    } else {
+      showAlert("비밀번호가 서로 일치합니다.");
+      setIsAlertVisible(isAlertVisible);
+      // setIsPwValid(pwCheckStatus);
+      setIsPwValid(true);
+    }
     setFormData({ ...formData, password: password });
   };
 
@@ -89,7 +107,7 @@ export const JoinForm = () => {
       const response = await checkDuplicateUsername(formData.username);
       if (response.code === 2) {
         setValidText(response.msg);
-        setIsEmailValid(true);
+        setIsUsernameValid(true);
       }
       if (response.error) {
         setValidText(response.msg);
@@ -103,13 +121,11 @@ export const JoinForm = () => {
       }
       if (!regTest(fieldName, emailValue)) {
         alert(hintMsg.email);
-        console.log("이메일 유효성 검사 실패");
         return false;
       }
       const response = await checkDuplicateEmail(formData.email);
       console.log("이메일 중복 확인 : ", response);
       if (response.code === 1) {
-        console.log("이메일 중복확인 성공");
         setIsEmailValid(true);
       }
       if (response.error) {
@@ -119,6 +135,17 @@ export const JoinForm = () => {
   };
 
   const hadleFmt = (e) => {
+    setIsAlertVisible(false);
+    console.log("이게 왜 호출돼?");
+    const { name, value, dataset } = e.target;
+
+    if (!regTest(name, value)) {
+      showAlert(hintMsg.phone);
+      return false;
+    } else {
+      showAlert("사용 가능한 휴대전화 번호입니다.");
+      setIsPhoneValid(true);
+    }
     const val = phoneFormat(e.target.value);
     setFormData({ ...formData, phone: val });
   };
@@ -126,17 +153,32 @@ export const JoinForm = () => {
   // // api : 회원가입 버튼 클릭 시 폼 제출
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    /**
-     * 회원가입 버튼 클릭 시
-     * 1. 모든 필드가 널값이 아닌지 확인
-     * 2. 중복 검사가 모두 실시되었는지 확인
-     * 3. 서버로 데이터 전송
-     */
     for (let key in formData) {
       let field = "";
       if (formData[key].trim() === "") {
-        console.log("key : ", key);
-        alert(`${key} 을(를) 입력해주세요.`);
+        switch (key) {
+          case "username":
+            field = "이름";
+            break;
+          case "email":
+            field = "이메일";
+            break;
+          case "password":
+            field = "비밀번호";
+            break;
+          case "address":
+            field = "주소";
+            break;
+          case "detailAddress":
+            field = "상세주소";
+            break;
+          case "note":
+            field = "참고사항";
+            break;
+          default:
+            field = "빈 칸";
+        }
+        alert(`${field}을(를) 입력해주세요.`);
         return false;
       }
     }
@@ -148,6 +190,22 @@ export const JoinForm = () => {
       alert("이메일을 작성해주세요");
     }
 
+    if (!isEmailValid) {
+      showAlert("이메일 중복 검사를 진행해주세요");
+      return false;
+    }
+    if (!isPhoneValid) {
+      showAlert("휴대전화 번호 형식이 올바르지 않습니다.");
+      return false;
+    }
+    if (!isPwValid) {
+      showAlert("비밀번호가 일치하지 않습니다.");
+      return false;
+    }
+    if (!isUsernameValid) {
+      showAlert("사용자 이름이 유효하지 않습니다.");
+      return false;
+    }
     if (window.confirm("회원가입을 진행하시겠습니까? ")) {
       try {
         await api.post(`/join`, formData);
@@ -188,12 +246,12 @@ export const JoinForm = () => {
                           className="form-control form-control-user"
                           placeholder="이름"
                           ref={usernameRef}
-                          value={formData.username || ""}
+                          value={formData.username}
                         />
                         {validText && formData.username && (
                           <p
                             style={{
-                              color: "red",
+                              color: "black",
                               fontSize: "12px",
                             }}
                           >
@@ -212,7 +270,7 @@ export const JoinForm = () => {
                             className="form-control form-control-user"
                             placeholder="이메일주소"
                             ref={emailRef}
-                            value={formData.email}
+                            value={formData.email || ""}
                           />
                         </div>
                         <div className="col-sm-3">
@@ -227,7 +285,11 @@ export const JoinForm = () => {
                         </div>
                       </div>
                       {/* password checker component */}
-                      <PasswordCheck onDataChange={handlePasswordChange} />
+                      <PasswordCheck
+                        onDataChange={handlePasswordChange}
+                        pwCheckStatus={pwCheckStatus}
+                        onPasswordMatch={handlePasswordMatch}
+                      />
                       <div className="form-group">
                         <input
                           data-name="휴대전화 번호"
@@ -239,7 +301,7 @@ export const JoinForm = () => {
                           className="form-control form-control-user"
                           placeholder="휴대폰번호"
                           ref={phoneRef}
-                          value={formData.phone}
+                          value={formData.phone || ""}
                         />
                       </div>
                       <div className="form-group row">
@@ -268,7 +330,7 @@ export const JoinForm = () => {
                           onChange={(e) => handleInputChange(e)}
                           className="form-control form-control-user"
                           placeholder="상세주소"
-                          value={formData.detailAddress}
+                          value={formData.detailAddress || ""}
                         />
                       </div>
                       <div className="form-group row">
