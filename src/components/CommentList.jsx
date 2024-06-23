@@ -108,13 +108,7 @@ const CommentList = ({ boardId }) => {
         >
           {cList &&
             cList.map((comment) => (
-              <li
-                key={comment.commentId}
-                // data-no="1"
-                // data-name="test"
-                // data-date="2024-04-01 12:45:23"
-                // data-parent="0"
-              >
+              <li key={comment.commentId}>
                 <div
                   className="commentDiv"
                   style={{ paddingLeft: `${comment.depth}rem` }}
