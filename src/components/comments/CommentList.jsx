@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   deleteComment,
   getCommentList,
-} from "../services/comment/CommentService";
-import { getFormattedDate } from "../utils/utility";
+} from "../../services/comment/CommentService";
+import { getFormattedDate } from "../../utils/utility";
 import CommentWrite from "./CommentWrite";
 import ReplyWrite from "./ReplyWrite";
-import { UserObjContext } from "../context/UserObjContext";
+import { UserObjContext } from "../../context/UserObjContext";
 
 const CommentList = ({ boardId }) => {
   const [cList, setCList] = useState([]);

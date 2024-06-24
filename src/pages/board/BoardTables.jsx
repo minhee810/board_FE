@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { boardList } from "../../services/board/BoardTableService";
 import Pagenation from "../../components/layout/Pagenation";
 import { dateFormat } from "../../utils/utility";
-import WriteButton from "../../components/button/WriteButton";
+import WriteButton from "../../components/common/button/WriteButton";
 
 const BoardTables = () => {
   const [list, setList] = useState([]);

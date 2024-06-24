@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import {
   getCommentList,
   replyComment,
-} from "../services/comment/CommentService";
+} from "../../services/comment/CommentService";
 
 const ReplyWrite = ({
   parentUsername,

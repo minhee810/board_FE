@@ -10,7 +10,8 @@ import {
 } from "../../services/auth/JoinService";
 import { hintMsg } from "../../utils/message";
 import { phoneFormat } from "../../utils/utility";
-
+import { InputField } from "../../components/common/input/InputField";
+import { UsernameInput } from "../../components/auth/JoinInput";
 export const JoinForm = () => {
   const navigate = useNavigate();
   const [isUsernameValid, setIsUsernameValid] = useState(false);
@@ -55,12 +56,13 @@ export const JoinForm = () => {
   // input 창 상태 관리 + replace 함수 호출
   const handleInputChange = (event) => {
     let { name, value, dataset } = event.target;
+
     if (dataset.check) {
       if (name) {
         const filteredValue = value.replace(REPLACE_VALID[name], "");
-        setFormData({ ...formData, [name]: filteredValue });
+        setFormData((prevData) => ({ ...prevData, [name]: filteredValue }));
       } else {
-        setFormData({ ...formData, [name]: value });
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
       }
     }
     if (name === "email") {
@@ -241,21 +243,25 @@ export const JoinForm = () => {
                     {/* form start */}
                     <form className="user">
                       <div className="form-group">
-                        <input
+                        <UsernameInput
+                          value={formData.username}
+                          onChange={handleInputChange}
+                          onBlur={checkDuplicate}
+                        />
+                        {/* <input
                           autoFocus
                           data-name="사용자 이름"
                           data-check={true}
                           type="text"
                           name="username"
                           maxLength={10}
-                          // onKeyUp={handleInputChange}
                           onChange={(e) => handleInputChange(e)}
                           onBlur={checkDuplicate}
                           className="form-control form-control-user"
                           placeholder="이름"
                           ref={usernameRef}
                           value={formData.username}
-                        />
+                        /> */}
                         {validText && formData.username && (
                           <p
                             style={{

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import CommentList from "../../components/CommentList";
-import CommentWrite from "../../components/CommentWrite";
+import CommentList from "../../components/comments/CommentList";
 import "../../assets/styles/board/board-detail.css";
 import {
   boardDelete,
@@ -18,20 +17,6 @@ const BoardDetail = () => {
   const { userData, setUserData } = useContext(UserObjContext);
 
   const [isAuthor, setIsAuthor] = useState(false); // 글 작성자와 로그인 사용자의 정보가 일치하는지
-
-  // useEffect(() => {
-  //   const fetchPost = async () => {
-  //     const response = await fetch(`/api/posts/${postId}`);
-  //     const postData = await response.json();
-  //     setPost(postData);
-
-  //     if (user && user.username === postData.author) {
-  //       setIsAuthor(true);
-  //     }
-  //   };
-
-  //   fetchPost();
-  // }, [postId, user]);
 
   const handleFileDownload = (boardId, orgFileName, saveFileName) => {
     console.log("handleFileDownload 호출");

@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
-import { UserObjContext } from "../../context/UserObjContext";
+import { UserObjContext } from "../../../context/UserObjContext";
 import { useNavigate } from "react-router-dom";
+import { CustomButton } from "./CustomButton";
 
 const WriteButton = () => {
   const navigate = useNavigate();
@@ -19,13 +20,11 @@ const WriteButton = () => {
   };
 
   return (
-    <button
-      type="button"
-      className="btn btn-primary btn float-right"
-      onClick={handleBoardWrite}
-    >
-      게시글 작성
-    </button>
+    <>
+      <CustomButton className="float-right" onClick={handleBoardWrite}>
+        게시글 작성
+      </CustomButton>
+    </>
   );
 };
 
