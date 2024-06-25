@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PostCode from "../../services/PostCode";
 import api from "../../utils/api";
-import PasswordCheck from "../../components/PasswordCheck";
+import PasswordCheck from "../../components/auth/PasswordCheckInput";
 import { REPLACE_VALID, regTest } from "../../utils/validation";
 import {
   checkDuplicateEmail,
@@ -10,8 +10,8 @@ import {
 } from "../../services/auth/JoinService";
 import { hintMsg } from "../../utils/message";
 import { phoneFormat } from "../../utils/utility";
-import { InputField } from "../../components/common/input/InputField";
-import { UsernameInput } from "../../components/auth/JoinInput";
+import { UsernameInput } from "../../components/auth/UsernameInput";
+import EmailInput from "../../components/auth/EmailInput";
 export const JoinForm = () => {
   const navigate = useNavigate();
   const [isUsernameValid, setIsUsernameValid] = useState(false);
@@ -35,7 +35,6 @@ export const JoinForm = () => {
     note: "",
   });
   const [validText, setValidText] = useState("");
-  // const [isAlertVisible, setIsAlertVisible] = useState(false);
 
   let isAlertVisible = useRef(false);
 
@@ -59,6 +58,7 @@ export const JoinForm = () => {
 
     if (dataset.check) {
       if (name) {
+        console.log("name : ", name, value);
         const filteredValue = value.replace(REPLACE_VALID[name], "");
         setFormData((prevData) => ({ ...prevData, [name]: filteredValue }));
       } else {
@@ -104,7 +104,9 @@ export const JoinForm = () => {
     e.preventDefault();
     const { name, value, dataset } = e.target;
     let fieldName = dataset.email;
+    console.log("ref : ", emailRef);
     const emailValue = emailRef.current.value;
+    console.log("emailValue Ref 값 : ", emailValue);
 
     if (name === "username") {
       if (!regTest(name, value)) {
@@ -248,20 +250,6 @@ export const JoinForm = () => {
                           onChange={handleInputChange}
                           onBlur={checkDuplicate}
                         />
-                        {/* <input
-                          autoFocus
-                          data-name="사용자 이름"
-                          data-check={true}
-                          type="text"
-                          name="username"
-                          maxLength={10}
-                          onChange={(e) => handleInputChange(e)}
-                          onBlur={checkDuplicate}
-                          className="form-control form-control-user"
-                          placeholder="이름"
-                          ref={usernameRef}
-                          value={formData.username}
-                        /> */}
                         {validText && formData.username && (
                           <p
                             style={{
@@ -275,16 +263,10 @@ export const JoinForm = () => {
                       </div>
                       <div className="form-group row">
                         <div className="col-sm-9 mb-3 mb-sm-0">
-                          <input
-                            data-name="이메일"
-                            data-check={true}
-                            type="text"
-                            name="email"
-                            onChange={(e) => handleInputChange(e)}
-                            className="form-control form-control-user"
-                            placeholder="이메일주소"
+                          <EmailInput
                             ref={emailRef}
-                            value={formData.email || ""}
+                            value={formData.email}
+                            onChange={handleInputChange}
                           />
                         </div>
                         <div className="col-sm-3">

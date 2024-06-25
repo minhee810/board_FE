@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { isMatch } from "../utils/utility"; // 이 함수가 비밀번호 일치를 확인하는 함수라고 가정합니다.
-import { regTest } from "../utils/validation";
-import { hintMsg } from "../utils/message";
+import { isMatch } from "../../utils/utility"; // 이 함수가 비밀번호 일치를 확인하는 함수라고 가정합니다.
+import { regTest } from "../../utils/validation";
+import { hintMsg } from "../../utils/message";
 
 const PasswordCheck = ({ onDataChange, onPasswordMatch, onPasswordValid }) => {
   const [isAlertVisible, setIsAlertVisible] = useState(false);

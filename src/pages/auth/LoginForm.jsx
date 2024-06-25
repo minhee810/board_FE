@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import api from "../../utils/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserObjContext } from "../../context/UserObjContext";
 
 const LoginForm = () => {
@@ -148,9 +148,9 @@ const LoginForm = () => {
                         <hr />
                       </form>
                       <div className="text-center">
-                        <a className="small" href="register.html">
+                        <Link to="/join" className="small">
                           Create an Account!
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>
