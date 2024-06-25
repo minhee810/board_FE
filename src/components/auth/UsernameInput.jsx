@@ -1,17 +1,14 @@
 import React, { forwardRef, memo, useState } from "react";
 import InputField from "../common/input/InputField";
-import { REPLACE_VALID, regTest } from "../../utils/validation";
-import { hintMsg } from "../../utils/message";
+import { REPLACE_VALID } from "../../utils/validation";
 
 const UsernameInput = forwardRef(({ value, onChange, onBlur }, ref) => {
   const [username, setUsername] = useState("");
-  const [validText, setValidText] = useState("");
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     const filteredValue = value.replace(REPLACE_VALID[name], "");
     setUsername(filteredValue);
-    onChange(event);
+    onChange(event); // 해야할까?
   };
 
   const handleBlur = (event) => {

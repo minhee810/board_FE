@@ -12,6 +12,7 @@ import { hintMsg } from "../../utils/message";
 import { phoneFormat } from "../../utils/utility";
 import EmailInput from "../../components/auth/EmailInput";
 import UsernameInput from "../../components/auth/UsernameInput";
+import PhoneInput from "../../components/auth/PhoneInput";
 
 export const JoinForm = () => {
   const navigate = useNavigate();
@@ -92,67 +93,50 @@ export const JoinForm = () => {
   };
 
   // api :  사용자 이름 & 이메일 중복 확인
-  const checkDuplicate = useCallback(
-    async (e, data) => {
-      e.preventDefault();
-      const { name, value, dataset } = e.target;
-      let fieldName = dataset.email;
-      const emailValue = emailRef.current.value;
+  const checkDuplicate = useCallback(async (e, data) => {
+    e.preventDefault();
+    const { name, dataset } = e.target;
 
-      if (name === "username") {
-        // if (!regTest(name, value)) {
-        //   setValidText(hintMsg.username);
-        //   return false;
-        // }
-        const response = await checkDuplicateUsername(data);
-        if (response.code === 2) {
-          setValidText(response.msg);
-          setIsUsernameValid(true);
-        }
-        if (response.error) {
-          setValidText(response.msg);
-        }
+    if (name === "username") {
+      const response = await checkDuplicateUsername(data);
+      if (response.code === 2) {
+        setValidText(response.msg);
+        setIsUsernameValid(true);
       }
-
-      if (fieldName === "email") {
-        if (!emailValue.trim()) {
-          alert("이메일을 입력해주세요");
-          return false;
-        }
-        if (!regTest(fieldName, emailValue)) {
-          alert(hintMsg.email);
-          return false;
-        }
-        const response = await checkDuplicateEmail(formData.email);
-        if (response.code === 1) {
-          setIsEmailValid(true);
-        }
-        if (response.error) {
-          alert(response.msg);
-        }
-      }
-    },
-    [formData]
-  );
-
-  const hadleFmt = (e) => {
-    const { name, value } = e.target;
-
-    if (!regTest(name, value)) {
-      if (formData.phone !== "") {
-        showAlert(hintMsg.phone);
-      }
-
-      return false;
-    } else {
-      if (!isPhoneValid) {
-        showAlert("사용 가능한 휴대전화 번호입니다.");
-        setIsPhoneValid(true);
+      if (response.error) {
+        setValidText(response.msg);
       }
     }
-    const val = phoneFormat(e.target.value);
-    setFormData({ ...formData, phone: val });
-  };
+
+    if (dataset.email === "email") {
+      const response = await checkDuplicateEmail(data);
+      if (response.code === 1) {
+        setIsEmailValid(true);
+      }
+      if (response.error) {
+        alert(response.msg);
+      }
+    }
+  }, []);
+
+  // const hadleFmt = (e) => {
+  //   const { name, value } = e.target;
+
+  //   if (!regTest(name, value)) {
+  //     if (formData.phone !== "") {
+  //       showAlert(hintMsg.phone);
+  //     }
+
+  //     return false;
+  //   } else {
+  //     if (!isPhoneValid) {
+  //       showAlert("사용 가능한 휴대전화 번호입니다.");
+  //       setIsPhoneValid(true);
+  //     }
+  //   }
+  //   const val = phoneFormat(e.target.value);
+  //   setFormData({ ...formData, phone: val });
+  // };
 
   // // api : 회원가입 버튼 클릭 시 폼 제출
   const handleFormSubmit = async (e) => {
@@ -256,33 +240,29 @@ export const JoinForm = () => {
                         )}
                       </div>
                       <div className="form-group row">
-                        <div className="col-sm-9 mb-3 mb-sm-0">
-                          <EmailInput
-                            ref={emailRef}
-                            value={formData.email}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="col-sm-3">
-                          <button
-                            data-email="email"
-                            name="emailCheck"
-                            onClick={checkDuplicate}
-                            className="btn btn-primary btn-user btn-block"
-                          >
-                            중복확인
-                          </button>
-                        </div>
+                        <EmailInput
+                          ref={emailRef}
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          onClick={checkDuplicate}
+                        />
                       </div>
                       {/* password checker component */}
                       <PasswordCheck
+                        showAlert={showAlert}
                         onDataChange={handlePasswordChange}
                         pwCheckStatus={pwCheckStatus}
                         onPasswordValid={handlePasswordValid}
                         onPasswordMatch={handlePasswordMatch}
                       />
                       <div className="form-group">
-                        <input
+                        <PhoneInput
+                          showAlert={showAlert}
+                          // onBlur={hadleFmt}
+                          onChange={handleInputChange}
+                          value={formData.phone}
+                        />
+                        {/* <input
                           data-name="휴대전화 번호"
                           data-check={true}
                           type="phone"
@@ -291,9 +271,9 @@ export const JoinForm = () => {
                           onBlur={(e) => hadleFmt(e)}
                           className="form-control form-control-user"
                           placeholder="휴대폰번호"
-                          ref={phoneRef}
+                          // ref={phoneRef}
                           value={formData.phone || ""}
-                        />
+                        /> */}
                       </div>
                       <div className="form-group row">
                         <div className="col-sm-9 mb-3 mb-sm-0">
@@ -318,7 +298,7 @@ export const JoinForm = () => {
                           data-name="상세주소"
                           type="text"
                           name="detailAddress"
-                          onChange={(e) => handleInputChange(e)}
+                          onChange={handleInputChange}
                           className="form-control form-control-user"
                           placeholder="상세주소"
                           value={formData.detailAddress || ""}

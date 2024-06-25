@@ -3,7 +3,12 @@ import { isMatch } from "../../utils/utility"; // 이 함수가 비밀번호 일
 import { regTest } from "../../utils/validation";
 import { hintMsg } from "../../utils/message";
 
-const PasswordCheck = ({ onDataChange, onPasswordMatch, onPasswordValid }) => {
+const PasswordCheck = ({
+  showAlert,
+  onDataChange,
+  onPasswordMatch,
+  onPasswordValid,
+}) => {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const passwordRef = useRef(null);
   const passwordConfirmRef = useRef(null);
@@ -24,13 +29,13 @@ const PasswordCheck = ({ onDataChange, onPasswordMatch, onPasswordValid }) => {
     onPasswordValid,
   ]);
 
-  const showAlert = (message) => {
-    if (!isAlertVisible) {
-      setIsAlertVisible(true);
-      alert(message);
-      setTimeout(() => setIsAlertVisible(false), 100);
-    }
-  };
+  // const showAlert = (message) => {
+  //   if (!isAlertVisible) {
+  //     setIsAlertVisible(true);
+  //     alert(message);
+  //     setTimeout(() => setIsAlertVisible(false), 100);
+  //   }
+  // };
 
   const handleRegTest = (e) => {
     const { name, value } = e.target;
