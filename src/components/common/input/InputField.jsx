@@ -1,6 +1,6 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, memo } from "react";
 
-export const InputField = forwardRef(
+const InputField = forwardRef(
   (
     {
       name,
@@ -33,3 +33,5 @@ export const InputField = forwardRef(
     );
   }
 );
+
+export default memo(InputField);
