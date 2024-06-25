@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PostCode from "../../services/PostCode";
 import api from "../../utils/api";
@@ -10,8 +10,9 @@ import {
 } from "../../services/auth/JoinService";
 import { hintMsg } from "../../utils/message";
 import { phoneFormat } from "../../utils/utility";
-import { UsernameInput } from "../../components/auth/UsernameInput";
 import EmailInput from "../../components/auth/EmailInput";
+import UsernameInput from "../../components/auth/UsernameInput";
+
 export const JoinForm = () => {
   const navigate = useNavigate();
   const [isUsernameValid, setIsUsernameValid] = useState(false);
@@ -53,37 +54,28 @@ export const JoinForm = () => {
   };
 
   // input 창 상태 관리 + replace 함수 호출
-  const handleInputChange = (event) => {
-    let { name, value, dataset } = event.target;
-
-    if (dataset.check) {
-      if (name) {
-        console.log("name : ", name, value);
-        const filteredValue = value.replace(REPLACE_VALID[name], "");
-        setFormData((prevData) => ({ ...prevData, [name]: filteredValue }));
-      } else {
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
-      }
-    }
-    if (name === "email") {
-      setIsEmailValid(false); // 이메일이 변경되면 유효성 검사를 초기화
-    }
-
-    if (name === "username") {
-      setIsUsernameValid(false); // userbane 변경되면 유효성 검사를 초기화
-    }
-
-    if (name === "password") {
-      setIsPasswordValid(false); // password 변경되면 유효성 검사를 초기화
-    }
-  };
+  const handleInputChange = useCallback(
+    (event) => {
+      let { name, value, dataset } = event.target;
+      // if (dataset.check) {
+      //   const filteredValue = value.replace(REPLACE_VALID[name], "");
+      //   setFormData((prevData) => ({ ...prevData, [name]: filteredValue }));
+      // } else {
+      // setFormData((prevData) => ({ ...prevData, [name]: value }));
+      // }
+      if (name === "email") setIsEmailValid(false); // 이메일이 변경되면 유효성 검사를 초기화
+      if (name === "username") setIsUsernameValid(false); // userbane 변경되면 유효성 검사를 초기화
+      if (name === "password") setIsPasswordValid(false); // password 변경되면 유효성 검사를 초기화
+    },
+    [setFormData, setIsEmailValid, setIsUsernameValid, setIsPasswordValid]
+  );
 
   const handlePasswordChange = (password, isMatchs) => {
     console.log("제출된 password : ", password);
     console.log("일치하는가 ? ", isMatchs);
     setIsMatch(isMatchs);
-
     console.log("isAlertVisible :", isAlertVisible.current);
+
     if (isMatchs) {
       if (!isAlertVisible.current) {
         console.log("비밀번호가 일치");
@@ -100,47 +92,48 @@ export const JoinForm = () => {
   };
 
   // api :  사용자 이름 & 이메일 중복 확인
-  const checkDuplicate = async (e) => {
-    e.preventDefault();
-    const { name, value, dataset } = e.target;
-    let fieldName = dataset.email;
-    console.log("ref : ", emailRef);
-    const emailValue = emailRef.current.value;
-    console.log("emailValue Ref 값 : ", emailValue);
+  const checkDuplicate = useCallback(
+    async (e, data) => {
+      e.preventDefault();
+      const { name, value, dataset } = e.target;
+      let fieldName = dataset.email;
+      const emailValue = emailRef.current.value;
 
-    if (name === "username") {
-      if (!regTest(name, value)) {
-        setValidText(hintMsg.username);
-        return false;
+      if (name === "username") {
+        // if (!regTest(name, value)) {
+        //   setValidText(hintMsg.username);
+        //   return false;
+        // }
+        const response = await checkDuplicateUsername(data);
+        if (response.code === 2) {
+          setValidText(response.msg);
+          setIsUsernameValid(true);
+        }
+        if (response.error) {
+          setValidText(response.msg);
+        }
       }
-      const response = await checkDuplicateUsername(formData.username);
-      if (response.code === 2) {
-        setValidText(response.msg);
-        setIsUsernameValid(true);
-      }
-      if (response.error) {
-        setValidText(response.msg);
-      }
-    }
 
-    if (fieldName === "email") {
-      if (!emailValue.trim()) {
-        alert("이메일을 입력해주세요");
-        return false;
+      if (fieldName === "email") {
+        if (!emailValue.trim()) {
+          alert("이메일을 입력해주세요");
+          return false;
+        }
+        if (!regTest(fieldName, emailValue)) {
+          alert(hintMsg.email);
+          return false;
+        }
+        const response = await checkDuplicateEmail(formData.email);
+        if (response.code === 1) {
+          setIsEmailValid(true);
+        }
+        if (response.error) {
+          alert(response.msg);
+        }
       }
-      if (!regTest(fieldName, emailValue)) {
-        alert(hintMsg.email);
-        return false;
-      }
-      const response = await checkDuplicateEmail(formData.email);
-      if (response.code === 1) {
-        setIsEmailValid(true);
-      }
-      if (response.error) {
-        alert(response.msg);
-      }
-    }
-  };
+    },
+    [formData]
+  );
 
   const hadleFmt = (e) => {
     const { name, value } = e.target;
@@ -249,8 +242,9 @@ export const JoinForm = () => {
                           value={formData.username}
                           onChange={handleInputChange}
                           onBlur={checkDuplicate}
+                          ref={usernameRef}
                         />
-                        {validText && formData.username && (
+                        {validText && usernameRef.current.value && (
                           <p
                             style={{
                               color: "black",
