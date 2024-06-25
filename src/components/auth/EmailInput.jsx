@@ -1,5 +1,5 @@
-import React, { forwardRef } from "react";
-import { InputField } from "../common/input/InputField";
+import React, { forwardRef, memo } from "react";
+import InputField from "../common/input/InputField";
 
 const EmailInput = forwardRef(({ value, onChange, onBlur }, ref) => {
   const handleChange = (event) => {
@@ -21,4 +21,4 @@ const EmailInput = forwardRef(({ value, onChange, onBlur }, ref) => {
   );
 });
 
-export default EmailInput;
+export default memo(EmailInput);
