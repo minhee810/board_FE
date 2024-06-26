@@ -64,6 +64,10 @@ const PasswordCheck = ({
 
   const handleCheck = (e) => {
     console.log("handleCheck()");
+    if (!password) {
+      showAlert("비밀번호를 입력해주세요");
+      return false;
+    }
     if (password && passwordConfirm) {
       let isMatchs = isMatch(password, passwordConfirm);
       if (isMatchs) {

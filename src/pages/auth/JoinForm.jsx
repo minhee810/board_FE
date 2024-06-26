@@ -13,6 +13,7 @@ import { phoneFormat } from "../../utils/utility";
 import EmailInput from "../../components/auth/EmailInput";
 import UsernameInput from "../../components/auth/UsernameInput";
 import PhoneInput from "../../components/auth/PhoneInput";
+import PostInput from "../../components/auth/PostInput";
 
 export const JoinForm = () => {
   const navigate = useNavigate();
@@ -50,41 +51,29 @@ export const JoinForm = () => {
       }, 100); // 100ms 후에 상태를 변경하여 다시 알림을 표시할 수 있도록 함
     }
   };
+
   const handlePasswordMatch = (isMatch) => {
     setIsMatch(isMatch);
   };
 
   // input 창 상태 관리 + replace 함수 호출
-  const handleInputChange = useCallback(
-    (event) => {
-      let { name, value, dataset } = event.target;
-      // if (dataset.check) {
-      //   const filteredValue = value.replace(REPLACE_VALID[name], "");
-      //   setFormData((prevData) => ({ ...prevData, [name]: filteredValue }));
-      // } else {
-      // setFormData((prevData) => ({ ...prevData, [name]: value }));
-      // }
-      if (name === "email") setIsEmailValid(false); // 이메일이 변경되면 유효성 검사를 초기화
-      if (name === "username") setIsUsernameValid(false); // userbane 변경되면 유효성 검사를 초기화
-      if (name === "password") setIsPasswordValid(false); // password 변경되면 유효성 검사를 초기화
-    },
-    [setFormData, setIsEmailValid, setIsUsernameValid, setIsPasswordValid]
-  );
+  const handleInputChange = useCallback((event) => {
+    let { name, value, dataset } = event.target;
+    // setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    // if (name === "username") setIsUsernameValid(false); // userbane 변경되면 유효성 검사를 초기화    // setUsername(event.target.value);
+    // if (name === "email") setIsEmailValid(false); // 이메일이 변경되면 유효성 검사를 초기화
+    // if (name === "password") setIsPasswordValid(false); // password 변경되면 유효성 검사를 초기화
+  }, []);
 
   const handlePasswordChange = (password, isMatchs) => {
-    console.log("제출된 password : ", password);
-    console.log("일치하는가 ? ", isMatchs);
     setIsMatch(isMatchs);
-    console.log("isAlertVisible :", isAlertVisible.current);
-
     if (isMatchs) {
       if (!isAlertVisible.current) {
-        console.log("비밀번호가 일치");
         showAlert("비밀번호가 서로 일치합니다.");
       }
     } else {
       if (!isAlertVisible.current) {
-        console.log("비밀번호가 일치하지 않음.");
         showAlert("비밀번호가 서로 일치하지 않습니다.");
         setIsMatch(false);
       }
@@ -102,6 +91,10 @@ export const JoinForm = () => {
       if (response.code === 2) {
         setValidText(response.msg);
         setIsUsernameValid(true);
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: data,
+        }));
       }
       if (response.error) {
         setValidText(response.msg);
@@ -112,6 +105,10 @@ export const JoinForm = () => {
       const response = await checkDuplicateEmail(data);
       if (response.code === 1) {
         setIsEmailValid(true);
+        setFormData((prevData) => ({
+          ...prevData,
+          [dataset.email]: data,
+        }));
       }
       if (response.error) {
         alert(response.msg);
@@ -119,28 +116,11 @@ export const JoinForm = () => {
     }
   }, []);
 
-  // const hadleFmt = (e) => {
-  //   const { name, value } = e.target;
-
-  //   if (!regTest(name, value)) {
-  //     if (formData.phone !== "") {
-  //       showAlert(hintMsg.phone);
-  //     }
-
-  //     return false;
-  //   } else {
-  //     if (!isPhoneValid) {
-  //       showAlert("사용 가능한 휴대전화 번호입니다.");
-  //       setIsPhoneValid(true);
-  //     }
-  //   }
-  //   const val = phoneFormat(e.target.value);
-  //   setFormData({ ...formData, phone: val });
-  // };
-
   // // api : 회원가입 버튼 클릭 시 폼 제출
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    console.log("formData : ", formData);
+
     for (let key in formData) {
       let field = "";
       if (formData[key].trim() === "") {
@@ -164,7 +144,7 @@ export const JoinForm = () => {
             field = "참고사항";
             break;
           default:
-            field = "빈 칸";
+            field = "모든 필드";
         }
         alert(`${field}을(를) 입력해주세요.`);
         return false;
@@ -205,6 +185,14 @@ export const JoinForm = () => {
     setIsPasswordValid(passwordValid);
   };
 
+  const handleBlur = (event, data) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
       <div className="bg-gradient-primary">
@@ -223,10 +211,11 @@ export const JoinForm = () => {
                     <form className="user">
                       <div className="form-group">
                         <UsernameInput
-                          value={formData.username}
-                          onChange={handleInputChange}
+                          showAlert={showAlert}
                           onBlur={checkDuplicate}
                           ref={usernameRef}
+                          setIsUsernameValid={setIsUsernameValid}
+                          value={formData.username}
                         />
                         {validText && usernameRef.current.value && (
                           <p
@@ -242,9 +231,9 @@ export const JoinForm = () => {
                       <div className="form-group row">
                         <EmailInput
                           ref={emailRef}
-                          value={formData.email}
-                          onChange={handleInputChange}
                           onClick={checkDuplicate}
+                          value={formData.email}
+                          setIsEmailValid={setIsEmailValid}
                         />
                       </div>
                       {/* password checker component */}
@@ -258,23 +247,17 @@ export const JoinForm = () => {
                       <div className="form-group">
                         <PhoneInput
                           showAlert={showAlert}
-                          // onBlur={hadleFmt}
-                          onChange={handleInputChange}
-                          value={formData.phone}
+                          onBlur={handleBlur}
+                          setIsPhoneValid={setIsPhoneValid}
+                          value={formData.password}
                         />
-                        {/* <input
-                          data-name="휴대전화 번호"
-                          data-check={true}
-                          type="phone"
-                          name="phone"
-                          onChange={(e) => handleInputChange(e)}
-                          onBlur={(e) => hadleFmt(e)}
-                          className="form-control form-control-user"
-                          placeholder="휴대폰번호"
-                          // ref={phoneRef}
-                          value={formData.phone || ""}
-                        /> */}
                       </div>
+                      {/* <PostInput
+                        showAlert={showAlert}
+                        value={formData}
+                        onChange={handleInputChange}
+                        onBlur={handleBlur}
+                      /> */}
                       <div className="form-group row">
                         <div className="col-sm-9 mb-3 mb-sm-0">
                           <input
@@ -299,9 +282,10 @@ export const JoinForm = () => {
                           type="text"
                           name="detailAddress"
                           onChange={handleInputChange}
+                          onBlur={handleBlur}
                           className="form-control form-control-user"
                           placeholder="상세주소"
-                          value={formData.detailAddress || ""}
+                          defaultValue={formData.detailAddress}
                         />
                       </div>
                       <div className="form-group row">
