@@ -4,6 +4,7 @@ import { boardList } from "../../services/board/BoardTableService";
 import Pagenation from "../../components/layout/Pagenation";
 import { dateFormat } from "../../utils/utility";
 import WriteButton from "../../components/common/button/WriteButton";
+import JasperListButton from "../../components/common/button/JasperListButton";
 
 const BoardTables = () => {
   const [list, setList] = useState([]);
@@ -84,6 +85,8 @@ const BoardTables = () => {
               </tbody>
             </table>
             <WriteButton />
+
+            <JasperListButton />
           </div>
         </div>
       </div>
