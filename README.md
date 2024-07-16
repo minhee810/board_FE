@@ -1,70 +1,10 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **🚌 카카오 주소 API 적용 > 재사용성을 고려하려 공통함수로 관리** [[🌱Blog Link]](https://nuvgw2810.tistory.com/404)
+- **Oracle ERD 설계 [ 🔎 [ERD Cloud Link](https://www.erdcloud.com/d/YmcM5yNQJZRRzftZf)**]
+- **Mybatis** 를 활용한 데이터베이스 접근 기술 활용 -> join
+- 게시글 조회, 작성, 수정, 삭제, 댓글, 무한 대댓글(계층형 쿼리 활용) 기능
+- **spring Interceptor**를 ****활용하여 **session** 유무에 따른 contoller 접근 허용 로직을 직접 구현
+- **Spring Security** 를 활용했던 경험을 살려 security filter chain 원리를 알고자 직접 filter와 interceptor의 차이를 학습한 뒤 interceptor를 활용 [🌱 [**Blog Link**](https://nuvgw2810.tistory.com/394) ]
+- 대댓글의 경우 **비동기**로 ****처리하여 동적으로 화면이 생성되도록 처리 [🌱 [**Blog Link**](https://nuvgw2810.tistory.com/408) ]
+- Javascript 를 활용하여 유효성 검사 로직 직접 작성
+- **Oracle 프로시저** 활용하여 조회 수 카운트 기능 구현
+- 조회 수 중복 증가 방지를 위해 **쿠키**에 사용자가 이미 읽은 게시글 번호를 저장하여 관리
