@@ -85,7 +85,6 @@ const BoardTables = () => {
               </tbody>
             </table>
             <WriteButton />
-
             <JasperListButton />
           </div>
         </div>
